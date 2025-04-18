@@ -59,3 +59,22 @@ fn test_tile_conversion() {
     assert_relative_eq!(new_lat_offset, 44.96479793033102_f64, epsilon = ACC);
     assert_relative_eq!(new_lon_offset, -44.82421875_f64, epsilon = ACC);
 }
+
+#[test]
+fn test_tile_scalefactor() {
+    assert_relative_eq!(
+        tile_scalefactor(&Tile::new(384, 368, 10)),
+        0.7075410884638627_f64,
+        epsilon = ACC
+    );
+    assert_relative_eq!(
+        tile_scalefactor(&Tile::new(384, 368, 26)),
+        0.08626970361752928_f64,
+        epsilon = ACC
+    );
+    assert_relative_eq!(
+        tile_scalefactor(&Tile::new(100, 100, 10)),
+        0.15910754230624527_f64,
+        epsilon = ACC
+    );
+}

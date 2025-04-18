@@ -66,6 +66,7 @@ pub fn tile_to_latitude(tile: &Tile, offset: f64) -> f64 {
     360.0 * (f64::atan(expy) / PI - 0.25)
 }
 
+/// Compute the longitude for a tile with an offset.
 pub fn tile_to_longitude(tile: &Tile, offset: f64) -> f64 {
     // Check if offset is between 0 and 1
     if offset < 0.0 || offset > 1.0 {
@@ -78,4 +79,14 @@ pub fn tile_to_longitude(tile: &Tile, offset: f64) -> f64 {
 
     // Compute longitude
     180.0 * (2.0 * (x + offset) / z2 - 1.0)
+}
+
+/// Inverse of the scale factor at the tile center.
+pub fn tile_scalefactor(tile: &Tile) -> f64 {
+    // Get Tile coords
+    let y = tile.y as f64;
+    let z2 = (1 << tile.z) as f64;
+    let y_offset = 0.5_f64;
+
+    f64::cos(2.0 * PI * (f64::atan(f64::exp(-(2.0 * (y + y_offset) / z2 - 1.0) * PI)) / PI - 0.25))
 }
