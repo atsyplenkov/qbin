@@ -88,5 +88,35 @@ pub fn tile_scalefactor(tile: &Tile) -> f64 {
     let z2 = (1 << tile.z) as f64;
     let y_offset = 0.5_f64;
 
+    // Estimate scale factor
     f64::cos(2.0 * PI * (f64::atan(f64::exp(-(2.0 * (y + y_offset) / z2 - 1.0) * PI)) / PI - 0.25))
+}
+
+/// Approximate area of a tile in square meters.
+pub fn tile_area(tile: &Tile) -> f64 {
+    // Get Tile coords
+    let x = tile.x;
+    let y = tile.y as f64;
+    let z = tile.z;
+
+    // Estimate area
+    let index = std::cmp::min(AF_LEN as usize - 1, z as usize);
+    let area_factor = AREA_FACTORS[index];
+    let mut area = area_factor * REF_AREA / (1 << (z << 1)) as f64;
+
+    // Adjust centering
+    let center_y = if z == 0 { 0 } else { 1 << (z - 1) };
+    let center_y = center_y as f64;
+
+    if y < center_y - 1.0 || y > center_y {
+        let z_factor = |y_val: f64| -> f64 {
+            // Create a new tile with the same x and z but different y
+            let temp_tile = Tile::new(x, y_val as usize, z);
+            tile_scalefactor(&temp_tile).powf(2.0)
+        };
+
+        area *= z_factor(y) / z_factor(center_y);
+    }
+
+    area
 }

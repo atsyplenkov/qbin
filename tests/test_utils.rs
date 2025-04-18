@@ -29,6 +29,15 @@ fn test_point_to_tile() {
     assert_eq!(point_to_tile(-175.0, 95.0, 2), Tile::new(0, 0, 2));
 }
 
+#[test]
+fn test_tile_area() {
+    assert_relative_eq!(
+        tile_area(&Tile::new(8108, 14336, 14)),
+        210619.87609208928_f64,
+        epsilon = ACC
+    );
+}
+
 // Additional tests
 #[test]
 fn test_tile_conversion() {
