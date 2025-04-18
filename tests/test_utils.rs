@@ -29,13 +29,24 @@ fn test_point_to_tile() {
     assert_eq!(point_to_tile(-175.0, 95.0, 2), Tile::new(0, 0, 2));
 }
 
+// Estimate tile's area
+// TODO:
+// Investigate why it differs from Python's version.
+// I have the impression that Python's code is erratic.
 #[test]
 fn test_tile_area() {
-    assert_relative_eq!(
-        tile_area(&Tile::new(8108, 14336, 14)),
-        210619.87609208928_f64,
-        epsilon = ACC
-    );
+    let cases = [
+        (Tile::new(0, 0, 0), 508164597540055.75_f64),
+        (Tile::new(1, 0, 1), 127516518279497.11_f64),
+        (Tile::new(0, 1, 1), 127516518279497.11_f64),
+        (Tile::new(0, 0, 2), 3731444586048.1396_f64),
+        (Tile::new(46, 3584, 12), 3366113.9540235824_f64),
+        (Tile::new(8108, 14336, 14), 210619.87609208928_f64),
+    ];
+
+    for (tile, expected) in cases.iter() {
+        assert_relative_eq!(tile_area(tile), *expected, epsilon = ACC);
+    }
 }
 
 // Additional tests
