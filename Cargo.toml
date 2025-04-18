@@ -10,3 +10,6 @@ keywords = ["quadbin", "spatial", "spatial-index", "quadkey"]
 categories = ["data-structures", "algorithms", "science::geo"]
 
 [dependencies]
+
+[dev-dependencies]
+approx = "0.5.1"

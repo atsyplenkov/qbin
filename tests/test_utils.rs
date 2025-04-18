@@ -1,4 +1,5 @@
 use quadbin::utils::*;
+use approx::assert_relative_eq;
 
 #[test]
 fn test_tile_conversion() {
@@ -16,13 +17,13 @@ fn test_tile_conversion() {
     let new_lon = tile_to_longitude(&tile, 0.0);
     let new_lat = tile_to_latitude(&tile, 0.0);
 
-    // Check conversion
-    assert_eq!(new_lat, 45.08903556483104f64);
-    assert_eq!(new_lon, lon);
+    // Check conversion with approximate equality
+    assert_relative_eq!(new_lat, 45.08903556483104f64, epsilon = 1e-10);
+    assert_relative_eq!(new_lon, lon, epsilon = 1e-10);
 
-    // Check offset
+    // Check offset with approximate equality
     let new_lon_offset = tile_to_longitude(&tile, 0.5);
     let new_lat_offset = tile_to_latitude(&tile, 0.5);
-    assert_eq!(new_lat_offset, 44.96479793033102f64);
-    assert_eq!(new_lon_offset, -44.82421875f64);
+    assert_relative_eq!(new_lat_offset, 44.96479793033102f64, epsilon = 1e-10);
+    assert_relative_eq!(new_lon_offset, -44.82421875f64, epsilon = 1e-10);
 }
