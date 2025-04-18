@@ -1,6 +1,7 @@
 use std::fmt;
 
 /// A single tile coordinates
+#[derive(Debug, PartialEq, Eq)]
 pub struct Tile {
     pub x: usize,
     pub y: usize,
