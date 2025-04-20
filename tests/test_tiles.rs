@@ -21,3 +21,16 @@ fn test_tile_hashing() {
         assert_eq!(from_tile_hash(*hash), *tile);
     }
 }
+
+#[test]
+fn test_point_hashing() {
+    let cases = [
+        ((46.152, -52.222), 10_u8, 44978282_u64),
+        ((46.152, -52.222), 22_u8, 755128617831862_u64),
+        ((46.152, -52.222), 26_u8, 193312953173859226_u64),
+    ];
+
+    for (coords, res, hash) in cases.iter() {
+        assert_eq!(point_cover(*coords, *res), *hash);
+    }
+}

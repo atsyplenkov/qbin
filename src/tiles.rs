@@ -1,4 +1,4 @@
-use crate::types::Tile;
+use crate::{types::Tile, utils::point_to_tile};
 
 /// Compute a hash from the tile.
 pub fn to_tile_hash(tile: &Tile) -> u64 {
@@ -24,4 +24,10 @@ pub fn from_tile_hash(tile_hash: u64) -> Tile {
     let y = ((xy - x) / dim) % dim;
 
     Tile::new(x as u32, y as u32, z as u8)
+}
+
+/// Return the tiles hashes that cover a point.
+pub fn point_cover(coordinates: (f64, f64), resolution: u8) -> u64 {
+    let tile = point_to_tile(coordinates.0, coordinates.1, resolution);
+    to_tile_hash(&tile)
 }
