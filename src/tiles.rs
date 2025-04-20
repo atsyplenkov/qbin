@@ -31,3 +31,7 @@ pub fn point_cover(coordinates: (f64, f64), resolution: u8) -> u64 {
     let tile = point_to_tile(coordinates.0, coordinates.1, resolution);
     to_tile_hash(&tile)
 }
+
+// TODO:
+// Add geo-traits support
+// https://crates.io/crates/geo-traits

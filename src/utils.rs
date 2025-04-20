@@ -23,7 +23,7 @@ pub fn point_to_tile_fraction(longitude: f64, latitude: f64, resolution: u8) -> 
     // Check resolution to avoid overflow
     if resolution > MAX_RESOLUTION || resolution < MIN_RESOLUTION {
         // TODO:
-        // Replace with Result
+        // Replace with Result for better error handling
         panic!(
             "Resolution should be between {} and {}",
             MIN_RESOLUTION, MAX_RESOLUTION
