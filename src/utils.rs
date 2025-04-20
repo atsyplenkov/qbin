@@ -120,3 +120,64 @@ pub fn tile_area(tile: &Tile) -> f64 {
 
     area
 }
+
+/// Compute the sibling (neighbour) tile in a specific direction.
+///
+/// # Parameters
+/// - `tile`: Reference to the tile ([Tile](cci:2://file:///home/atsyp/Projects/quadbin/src/types.rs:4:0-8:1)) to find a neighbour for.
+/// - `direction`: Direction as an integer:
+///     - `0`: up
+///     - `1`: right
+///     - `2`: left
+///     - `3`: down
+///
+/// # Returns
+/// - `Some(Tile)`: The sibling tile in the specified direction, if it exists.
+/// - `None`: If there is no valid sibling in that direction.
+pub fn tile_sibling(tile: &Tile, direction: u8) -> Option<Tile> {
+    // Early return for a low level == no neighbors
+    if tile.z == 0_u8 {
+        return None;
+    }
+
+    // Get Tile params
+    let mut x = tile.x;
+    let mut y = tile.y;
+    let z = tile.z;
+
+    let tiles_per_level = 2 << (z as usize - 1);
+
+    match direction {
+        0 => { // UP
+            if y > 0 {
+                y -= 1;
+            } else {
+                return None;
+            }
+        }
+        1 => { // RIGHT
+            if x < tiles_per_level - 1 {
+                x += 1;
+            } else {
+                return None;
+            }
+        }
+        2 => { // LEFT
+            if x > 0 {
+                x -= 1;
+            } else {
+                return None;
+            }
+        }
+        3 => { // DOWN
+            if y < tiles_per_level - 1 {
+                y += 1;
+            } else {
+                return None;
+            }
+        }
+        _ => return None,
+    }
+
+    Some(Tile::new(x, y, z))
+}

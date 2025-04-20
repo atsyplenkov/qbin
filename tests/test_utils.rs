@@ -98,3 +98,57 @@ fn test_tile_scalefactor() {
         epsilon = ACC
     );
 }
+
+// Find tiles neighbours (aka siblings)
+#[test]
+fn test_tile_sibling() {
+    // Test zoom level 0 (should always return None)
+    assert_eq!(tile_sibling(&Tile::new(0, 0, 0), 0), None); // UP
+    assert_eq!(tile_sibling(&Tile::new(0, 0, 0), 1), None); // RIGHT
+    assert_eq!(tile_sibling(&Tile::new(0, 0, 0), 2), None); // LEFT
+    assert_eq!(tile_sibling(&Tile::new(0, 0, 0), 3), None); // DOWN
+
+    // Test UP direction (0)
+    let up_cases = [
+        (Tile::new(1, 0, 2), None),
+        (Tile::new(2, 3, 3), Some(Tile::new(2, 2, 3))),
+    ];
+
+    for (tile, expected) in up_cases.iter() {
+        assert_eq!(tile_sibling(tile, 0), *expected);
+    }
+
+    // Test RIGHT direction (1)
+    let right_cases = [
+        (Tile::new(3, 1, 2), None),
+        (Tile::new(8108, 14336, 14), Some(Tile::new(8109, 14336, 14))),
+    ];
+
+    for (tile, expected) in right_cases.iter() {
+        assert_eq!(tile_sibling(tile, 1), *expected);
+    }
+
+    // Test LEFT direction (2)
+    let left_cases = [
+        (Tile::new(0, 1, 2), None),
+        (Tile::new(5, 5, 3), Some(Tile::new(4, 5, 3))),
+    ];
+
+    for (tile, expected) in left_cases.iter() {
+        assert_eq!(tile_sibling(tile, 2), *expected);
+    }
+
+    // Test DOWN direction (3)
+    let down_cases = [
+        (Tile::new(1, 3, 2), None),
+        (Tile::new(7, 2, 3), Some(Tile::new(7, 3, 3))),
+    ];
+
+    for (tile, expected) in down_cases.iter() {
+        assert_eq!(tile_sibling(tile, 3), *expected);
+    }
+
+    // Test invalid direction
+    assert_eq!(tile_sibling(&Tile::new(1, 1, 2), 4), None);
+    assert_eq!(tile_sibling(&Tile::new(1, 1, 2), 255), None);
+}
