@@ -22,6 +22,8 @@ pub fn clip_latitude(latitude: f64) -> f64 {
 pub fn point_to_tile_fraction(longitude: f64, latitude: f64, resolution: u8) -> (f64, f64, u8) {
     // Check resolution to avoid overflow
     if resolution > MAX_RESOLUTION || resolution < MIN_RESOLUTION {
+        // TODO:
+        // Replace with Result
         panic!(
             "Resolution should be between {} and {}",
             MIN_RESOLUTION, MAX_RESOLUTION
@@ -45,8 +47,8 @@ pub fn point_to_tile_fraction(longitude: f64, latitude: f64, resolution: u8) -> 
 /// Compute the tile for a longitude and latitude in a specific resolution.
 pub fn point_to_tile(longitude: f64, latitude: f64, resolution: u8) -> Tile {
     let (x, y, z) = point_to_tile_fraction(longitude, latitude, resolution);
-    let x: usize = x.floor() as usize;
-    let y: usize = y.floor() as usize;
+    let x: u32 = x.floor() as u32;
+    let y: u32 = y.floor() as u32;
     Tile::new(x, y, z)
 }
 
@@ -111,7 +113,7 @@ pub fn tile_area(tile: &Tile) -> f64 {
     if y < center_y - 1.0 || y > center_y {
         let z_factor = |y_val: f64| -> f64 {
             // Create a new tile with the same x and z but different y
-            let temp_tile = Tile::new(x, y_val as usize, z);
+            let temp_tile = Tile::new(x, y_val as u32, z);
             tile_scalefactor(&temp_tile).powf(2.0)
         };
 
@@ -145,31 +147,35 @@ pub fn tile_sibling(tile: &Tile, direction: u8) -> Option<Tile> {
     let mut y = tile.y;
     let z = tile.z;
 
-    let tiles_per_level = 2 << (z as usize - 1);
+    let tiles_per_level = 1u32 << z;
 
     match direction {
-        0 => { // UP
+        0 => {
+            // UP
             if y > 0 {
                 y -= 1;
             } else {
                 return None;
             }
         }
-        1 => { // RIGHT
+        1 => {
+            // RIGHT
             if x < tiles_per_level - 1 {
                 x += 1;
             } else {
                 return None;
             }
         }
-        2 => { // LEFT
+        2 => {
+            // LEFT
             if x > 0 {
                 x -= 1;
             } else {
                 return None;
             }
         }
-        3 => { // DOWN
+        3 => {
+            // DOWN
             if y < tiles_per_level - 1 {
                 y += 1;
             } else {

@@ -61,8 +61,8 @@ fn test_tile_conversion() {
     let tile = point_to_tile(lon, lat, 10);
 
     // Check Tile conversion
-    assert_eq!(tile.x, 384_usize);
-    assert_eq!(tile.y, 368_usize);
+    assert_eq!(tile.x, 384_u32);
+    assert_eq!(tile.y, 368_u32);
     assert_eq!(tile.z, 10_u8);
 
     // Convert back to coordinates
