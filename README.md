@@ -6,6 +6,9 @@ A Rust implementation of QuadBin, a hierarchical geospatial index tiling approac
 
 This crate is a complete rewrite of the original implementation in [JavaScript](https://github.com/CartoDB/quadbin-js) and [Python](https://github.com/CartoDB/quadbin-py). Learn more about QuadBin in the [Carto documentation](https://docs.carto.com/data-and-analysis/analytics-toolbox-for-snowflake/sql-reference/quadbin).
     
+## Reasoning
+This repository is a proof-of-concept project, where I practised writing Rust code, and, moreover, writing Rust and R bindings as a single project. Recently, I was excited by the newly proposed  [`raquet`](https://github.com/CartoDB/raquet) format by [CARTO](https://github.com/CartoDB) for storing raster data in Parquet files and was eager to try it in my projects. However, the `raquet` file specification and conversion are written in pure Python; therefore, instead of implementing R-to-Python, I decided to rewrite everything in Rust, merely for fun and practice. This repository is the first step towards native, GDAL-free raster to `raquet` conversion.
+
 ## License and Attribution
 This project includes a reimplementation of logic based on [`quadbin-py`](https://github.com/CartoDB/quadbin-py) by CARTO, which is licensed under the BSD 3-Clause License.
 See [`LICENSE-THIRD-PARTY`](LICENSE-THIRD-PARTY) for full license text.
