@@ -1,5 +1,5 @@
-use quadbin::cells::*;
-use quadbin::types::Tile;
+use crate::cells::*;
+use crate::types::Tile;
 
 // Validation test from original CARTO's `quadbin-js`
 // https://github.com/CartoDB/quadbin-js/blob/40cce2fc6b9dc72bf19c69ffb6705f8b73d24b2c/test/index.spec.ts#L30-L34

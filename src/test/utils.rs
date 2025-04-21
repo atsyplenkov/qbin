@@ -1,6 +1,6 @@
+use crate::types::Tile;
+use crate::utils::*;
 use approx::assert_relative_eq;
-use quadbin::types::Tile;
-use quadbin::utils::*;
 
 // Declare accuracy for float values comparison on various OS
 const ACC: f64 = 1e-10;

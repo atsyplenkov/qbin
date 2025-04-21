@@ -1,5 +1,5 @@
-use quadbin::tiles::*;
-use quadbin::types::Tile;
+use crate::tiles::*;
+use crate::types::Tile;
 
 #[test]
 fn test_tile_hashing() {

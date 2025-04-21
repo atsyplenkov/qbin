@@ -2,10 +2,6 @@ use crate::constants::*;
 use crate::types::Tile;
 use std::f64::consts::PI;
 
-// TODO:
-// Make these functions available only in the crate
-// Find a way to keep approx crate as a dev dependency only
-
 /// Clip a value between a minimum and maximum value
 pub(crate) fn clip_number(num: f64, lower: f64, upper: f64) -> f64 {
     num.max(lower).min(upper)
@@ -23,7 +19,11 @@ pub(crate) fn clip_latitude(latitude: f64) -> f64 {
 
 /// Compute the tile in fractions for a longitude and latitude in a
 /// specific resolution.
-pub fn point_to_tile_fraction(longitude: f64, latitude: f64, resolution: u8) -> (f64, f64, u8) {
+pub(crate) fn point_to_tile_fraction(
+    longitude: f64,
+    latitude: f64,
+    resolution: u8,
+) -> (f64, f64, u8) {
     // Check resolution to avoid overflow
     if resolution > MAX_RESOLUTION || resolution < MIN_RESOLUTION {
         // TODO:
@@ -88,7 +88,7 @@ pub fn tile_to_longitude(tile: &Tile, offset: f64) -> f64 {
 }
 
 /// Inverse of the scale factor at the tile center.
-pub fn tile_scalefactor(tile: &Tile) -> f64 {
+pub(crate) fn tile_scalefactor(tile: &Tile) -> f64 {
     // Get Tile coords
     let y = tile.y as f64;
     let z2 = (1 << tile.z) as f64;
