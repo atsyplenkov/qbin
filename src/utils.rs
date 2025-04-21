@@ -7,17 +7,17 @@ use std::f64::consts::PI;
 // Find a way to keep approx crate as a dev dependency only
 
 /// Clip a value between a minimum and maximum value
-pub fn clip_number(num: f64, lower: f64, upper: f64) -> f64 {
+pub(crate) fn clip_number(num: f64, lower: f64, upper: f64) -> f64 {
     num.max(lower).min(upper)
 }
 
 /// Limit longitude bounds.
-pub fn clip_longitude(longitude: f64) -> f64 {
+pub(crate) fn clip_longitude(longitude: f64) -> f64 {
     clip_number(longitude, MIN_LONGITUDE, MAX_LONGITUDE)
 }
 
 /// Limit latitude bounds.
-pub fn clip_latitude(latitude: f64) -> f64 {
+pub(crate) fn clip_latitude(latitude: f64) -> f64 {
     clip_number(latitude, MIN_LATITUDE, MAX_LATITUDE)
 }
 
