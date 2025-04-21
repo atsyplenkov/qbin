@@ -1,10 +1,10 @@
-# QuadBin
+# Quadbin
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/atsyplenkov/quadbin/blob/main/LICENSE) [![crates.io](https://img.shields.io/crates/v/quadbin.svg?logo=rust)](https://crates.io/crates/quadbin) [![Build & Test](https://github.com/atsyplenkov/quadbin/actions/workflows/rust.yml/badge.svg)](https://github.com/atsyplenkov/quadbin/actions/workflows/rust.yml)
 
-A Rust implementation of QuadBin, a hierarchical geospatial index tiling approach developed by [CARTO](https://github.com/CartoDB). Unlike [Microsoft's Bing Maps Tile System](https://docs.microsoft.com/en-us/bingmaps/articles/bing-maps-tile-system), QuadBin stores the information to uniquely identify any of the grid cells that result from uniformly subdividing a map in Mercator projection into four squares at different resolution levels, from 0 to 26 (less than 1 m² at the equator), in a 64-bit unsigned integer.
+A Rust implementation of Quadbin, a hierarchical geospatial index tiling approach developed by [CARTO](https://github.com/CartoDB). Unlike [Microsoft's Bing Maps Tile System](https://docs.microsoft.com/en-us/bingmaps/articles/bing-maps-tile-system), Quadbin stores the information to uniquely identify any of the grid cells that result from uniformly subdividing a map in Mercator projection into four squares at different resolution levels, from 0 to 26 (less than 1 m² at the equator), in a 64-bit unsigned integer.
 
-This crate is a complete rewrite of the original implementation in [JavaScript](https://github.com/CartoDB/quadbin-js) and [Python](https://github.com/CartoDB/quadbin-py). Learn more about QuadBin in the [CARTO documentation](https://docs.carto.com/data-and-analysis/analytics-toolbox-for-snowflake/sql-reference/quadbin).
+This crate is a complete rewrite of the original implementation in [JavaScript](https://github.com/CartoDB/quadbin-js) and [Python](https://github.com/CartoDB/quadbin-py). Learn more about Quadbin in the [CARTO documentation](https://docs.carto.com/data-and-analysis/analytics-toolbox-for-snowflake/sql-reference/quadbin).
     
 
 ## Usage examples
