@@ -16,7 +16,7 @@ let longitude = -3.7038;
 let latitude = 40.4168;
 let resolution = 10_u8;
 let qb = quadbin::cells::point_to_cell(longitude, latitude, resolution);
-assert_eq!(qb, 5234261499580514303_u64);
+assert_eq!(qb, Some(5234261499580514303_u64));
 ```
 
 ## Quadbin vs. Quadkey
