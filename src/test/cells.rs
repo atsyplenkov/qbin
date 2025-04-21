@@ -1,6 +1,24 @@
 use crate::cells::*;
 use crate::types::Tile;
 
+// Test validiy of Quadbin cell indexes
+#[test]
+fn test_is_cell_valid() {
+    let cases = [
+        (5209574053332910079_u64, true),
+        (5192650370358181887_u64, true),
+        (5202361257054699519_u64, true),
+        (5291729562728627583_u64, true),
+        (0_u64, false),
+        (5209574053332910078_u64, false),
+        (6362495557939757055_u64, false),
+    ];
+
+    for (cell, expected) in cases.iter() {
+        assert_eq!(is_valid_cell(*cell), *expected);
+    }
+}
+
 // Validation test from original CARTO's `quadbin-js`
 // https://github.com/CartoDB/quadbin-js/blob/40cce2fc6b9dc72bf19c69ffb6705f8b73d24b2c/test/index.spec.ts#L30-L34
 #[test]

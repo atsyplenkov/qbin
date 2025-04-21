@@ -2,6 +2,22 @@ use crate::constants::*;
 use crate::types::Tile;
 use crate::utils::*;
 
+/// Quadbin cell validation
+pub fn is_valid_cell(cell: u64) -> bool {
+    let header = HEADER;
+    let mode = (cell >> 59) & 7;
+    let resolution = (cell >> 52) & 0x1F;
+    let resolution_shift = resolution.saturating_mul(4);
+    let unused = if resolution_shift >= 64 {
+        0
+    } else {
+        FOOTER >> resolution_shift
+    };
+
+    // Checks
+    (cell & header == header) && mode == 1 && resolution <= 26 && (cell & unused == unused)
+}
+
 /// Convert a tile into a Quadbin cell.
 pub fn tile_to_cell(tile: Option<&Tile>) -> Option<u64> {
     let tile = tile?;
@@ -33,7 +49,10 @@ pub fn tile_to_cell(tile: Option<&Tile>) -> Option<u64> {
 /// Convert Quadbin cell into a tile
 pub fn cell_to_tile(cell: u64) -> Option<Tile> {
     // TODO:
-    // Add cell validation
+    // Replace with proper Error
+    if !is_valid_cell(cell) {
+        return None;
+    }
     let z = cell >> 52 & 31;
     let q = (cell & FOOTER) << 12;
     let mut x = q;
