@@ -27,8 +27,8 @@ pub fn from_tile_hash(tile_hash: u64) -> Tile {
 }
 
 /// Return the tiles hashes that cover a point.
-pub fn point_cover(coordinates: (f64, f64), resolution: u8) -> u64 {
-    let tile = point_to_tile(coordinates.0, coordinates.1, resolution);
+pub fn point_cover(longitude: f64, latitude: f64, resolution: u8) -> u64 {
+    let tile = point_to_tile(longitude, latitude, resolution);
     to_tile_hash(&tile)
 }
 

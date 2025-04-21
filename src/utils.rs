@@ -3,8 +3,8 @@ use crate::types::Tile;
 use std::f64::consts::PI;
 
 // TODO:
-// Make this functions available only in crate
-// Find a way to keep approx crate a dev dependency only
+// Make these functions available only in the crate
+// Find a way to keep approx crate as a dev dependency only
 
 /// Clip a value between a minimum and maximum value
 pub fn clip_number(num: f64, lower: f64, upper: f64) -> f64 {

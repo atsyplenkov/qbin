@@ -31,6 +31,6 @@ fn test_point_hashing() {
     ];
 
     for (coords, res, hash) in cases.iter() {
-        assert_eq!(point_cover(*coords, *res), *hash);
+        assert_eq!(point_cover(coords.0, coords.1, *res), *hash);
     }
 }
