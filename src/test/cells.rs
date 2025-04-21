@@ -53,12 +53,29 @@ fn test_tile_and_cell_conversion() {
 // https://github.com/CartoDB/quadbin-py?tab=readme-ov-file#usage
 #[test]
 fn test_point_to_cell() {
+    // TODO:
+    // Add tests for invalid resolution
     let cases = [
-        ((-3.7038, 40.4168), 10_u8, 5234261499580514303_u64),
-        ((-3.7038, 40.4168), 4_u8, 5207251884775047167_u64),
+        (-3.7038, 40.4168, 10_u8, 5234261499580514303_u64),
+        (-3.7038, 40.4168, 4_u8, 5207251884775047167_u64),
+        (33.75, -11.178401873711776, 4_u8, 5209574053332910079_u64),
+        (0.0, 85.05112877980659, 26_u8, 5306366260949286912_u64),
+        (0.0, 88.0, 26_u8, 5306366260949286912_u64),
+        (0.0, 90.0, 26_u8, 5306366260949286912_u64),
+        (0.0, -85.05112877980659, 26_u8, 5309368660700867242_u64),
+        (0.0, -88.0, 26_u8, 5309368660700867242_u64),
+        (0.0, -90.0, 26_u8, 5309368660700867242_u64),
     ];
 
-    for (coords, res, cell) in cases.iter() {
-        assert_eq!(point_to_cell(coords.0, coords.1, *res), Some(*cell));
+    for (x, y, res, cell) in cases.iter() {
+        assert_eq!(point_to_cell(*x, *y, *res), Some(*cell));
     }
+}
+// Convert quadbin cell back to coords
+#[test]
+fn test_cell_to_point() {
+    assert_eq!(
+        cell_to_point(5209574053332910079_u64),
+        Some((33.75, -11.178401873711776))
+    )
 }

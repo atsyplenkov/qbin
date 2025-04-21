@@ -91,3 +91,18 @@ pub fn point_to_cell(longitude: f64, latitude: f64, resolution: u8) -> Option<u6
 
     tile_to_cell(Some(&tile))
 }
+
+/// Convert cell into point
+pub fn cell_to_point(cell: u64) -> Option<(f64, f64)> {
+    // TODO:
+    // Replace with proper Error
+    if !is_valid_cell(cell) {
+        return None;
+    }
+
+    let tile = cell_to_tile(cell)?;
+    let lat = tile_to_latitude(&tile, 0.5);
+    let lon = tile_to_longitude(&tile, 0.5);
+
+    Some((lon, lat))
+}

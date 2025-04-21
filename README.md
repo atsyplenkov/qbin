@@ -19,6 +19,13 @@ let qb = quadbin::cells::point_to_cell(longitude, latitude, resolution);
 assert_eq!(qb, Some(5234261499580514303_u64));
 ```
 
+### Get a point from a Quadbin cell
+
+```rust
+let coords = quadbin::cells::cell_to_point(5209574053332910079_u64);
+assert_eq!(coords, Some((33.75, -11.178401873711776)));
+```
+
 ## Quadbin vs. Quadkey
 TBA
 
