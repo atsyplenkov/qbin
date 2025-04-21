@@ -17,6 +17,7 @@ pub fn to_tile_hash(tile: &Tile) -> u64 {
 pub fn from_tile_hash(tile_hash: u64) -> Tile {
     // TODO:
     // Return None if hash is invalid
+    // Understand why do we need tile hashing
     let z = tile_hash % 32_u64;
     let dim = 2_u64 * (1_u64 << z);
     let xy = (tile_hash - z) / 32;
