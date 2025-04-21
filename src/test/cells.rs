@@ -4,11 +4,13 @@ use crate::types::Tile;
 // Validation test from original CARTO's `quadbin-js`
 // https://github.com/CartoDB/quadbin-js/blob/40cce2fc6b9dc72bf19c69ffb6705f8b73d24b2c/test/index.spec.ts#L30-L34
 #[test]
-fn test_tile_to_cell() {
+fn test_tile_and_cell_conversion() {
     // Test early return
     assert_eq!(tile_to_cell(None), None);
 
     // Test real examples
+    // TODO:
+    // Add more cases
     let cases = [
         (9_u32, 8_u32, 4_u8, 5209574053332910079_u64),
         (0_u32, 0_u32, 0_u8, 5192650370358181887_u64),
@@ -16,8 +18,14 @@ fn test_tile_to_cell() {
         (1023_u32, 2412_u32, 23_u8, 5291729562728627583_u64),
     ];
 
+    // Tile to cell conversion
     for (x, y, z, cell) in cases.iter() {
         assert_eq!(tile_to_cell(Some(&Tile::new(*x, *y, *z))), Some(*cell));
+    }
+
+    // Cell to tile conversion
+    for (x, y, z, cell) in cases.iter() {
+        assert_eq!(cell_to_tile(*cell), Some(Tile::new(*x, *y, *z)));
     }
 }
 

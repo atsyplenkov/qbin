@@ -28,9 +28,9 @@ pub(crate) const AREA_FACTORS: [f64; 12] = [
 pub(crate) const AF_LEN: u8 = AREA_FACTORS.len() as u8;
 
 // Quadbin cell
-pub const HEADER: u64 = 0x4000_0000_0000_0000;
-pub const FOOTER: u64 = 0x000F_FFFF_FFFF_FFFF;
-pub const B: [u64; 6] = [
+pub(crate) const HEADER: u64 = 0x4000_0000_0000_0000;
+pub(crate) const FOOTER: u64 = 0x000F_FFFF_FFFF_FFFF;
+pub(crate) const B: [u64; 6] = [
     0x5555_5555_5555_5555,
     0x3333_3333_3333_3333,
     0x0F0F_0F0F_0F0F_0F0F,
@@ -38,4 +38,4 @@ pub const B: [u64; 6] = [
     0x0000_FFFF_0000_FFFF,
     0x0000_0000_FFFF_FFFF,
 ];
-pub const S: [u8; 5] = [1, 2, 4, 8, 16];
+pub(crate) const S: [u8; 5] = [1, 2, 4, 8, 16];

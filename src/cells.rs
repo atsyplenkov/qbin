@@ -2,7 +2,7 @@ use crate::constants::*;
 use crate::types::Tile;
 use crate::utils::*;
 
-/// Convert a tile into a cell.
+/// Convert a tile into a Quadbin cell.
 pub fn tile_to_cell(tile: Option<&Tile>) -> Option<u64> {
     let tile = tile?;
     let mut x = tile.x as u64;
@@ -28,6 +28,39 @@ pub fn tile_to_cell(tile: Option<&Tile>) -> Option<u64> {
     y = (y | (y << S[0])) & B[0];
 
     Some(HEADER | (1 << 59) | ((z as u64) << 52) | ((x | (y << 1)) >> 12) | (FOOTER >> (z * 2)))
+}
+
+/// Convert Quadbin cell into a tile
+pub fn cell_to_tile(cell: u64) -> Option<Tile> {
+    // TODO:
+    // Add cell validation
+    let z = cell >> 52 & 31;
+    let q = (cell & FOOTER) << 12;
+    let mut x = q;
+    let mut y = q >> 1;
+
+    x = x & B[0];
+    y = y & B[0];
+
+    x = (x | (x >> S[0])) & B[1];
+    y = (y | (y >> S[0])) & B[1];
+
+    x = (x | (x >> S[1])) & B[2];
+    y = (y | (y >> S[1])) & B[2];
+
+    x = (x | (x >> S[2])) & B[3];
+    y = (y | (y >> S[2])) & B[3];
+
+    x = (x | (x >> S[3])) & B[4];
+    y = (y | (y >> S[3])) & B[4];
+
+    x = (x | (x >> S[4])) & B[5];
+    y = (y | (y >> S[4])) & B[5];
+
+    x = x >> (32 - z);
+    y = y >> (32 - z);
+
+    Some(Tile::new(x as u32, y as u32, z as u8))
 }
 
 /// Convert a geographic point into a cell.

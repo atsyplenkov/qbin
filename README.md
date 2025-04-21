@@ -9,7 +9,7 @@ This crate is a complete rewrite of the original implementation in [JavaScript](
 
 ## Usage examples
 
-### Convert a geographic point into a cell
+### Convert a point into a Quadbin cell
 
 ```rust
 let longitude = -3.7038;
