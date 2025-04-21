@@ -7,6 +7,18 @@ A Rust implementation of QuadBin, a hierarchical geospatial index tiling approac
 This crate is a complete rewrite of the original implementation in [JavaScript](https://github.com/CartoDB/quadbin-js) and [Python](https://github.com/CartoDB/quadbin-py). Learn more about QuadBin in the [CARTO documentation](https://docs.carto.com/data-and-analysis/analytics-toolbox-for-snowflake/sql-reference/quadbin).
     
 
+## Usage examples
+
+### Convert a geographic point into a cell
+
+```rust
+let longitude = -3.7038;
+let latitude = 40.4168;
+let resolution = 10_u8;
+let qb = quadbin::cells::point_to_cell(longitude, latitude, resolution);
+assert_eq!(qb, 5234261499580514303_u64);
+```
+
 ## Quadbin vs. Quadkey
 TBA
 
