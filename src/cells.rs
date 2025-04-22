@@ -18,6 +18,11 @@ pub fn is_valid_cell(cell: u64) -> bool {
     (cell & header == header) && mode == 1 && resolution <= 26 && (cell & unused == unused)
 }
 
+/// Get resolution of an Quadbin cell
+pub fn cell_resolution(cell: u64) -> u8 {
+    ((cell >> 52) & 0x1F) as u8
+}
+
 /// Convert a tile into a Quadbin cell.
 pub fn tile_to_cell(tile: Option<&Tile>) -> Option<u64> {
     let tile = tile?;

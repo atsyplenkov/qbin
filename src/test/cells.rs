@@ -71,6 +71,7 @@ fn test_point_to_cell() {
         assert_eq!(point_to_cell(*x, *y, *res), Some(*cell));
     }
 }
+
 // Convert quadbin cell back to coords
 #[test]
 fn test_cell_to_point() {
@@ -78,4 +79,10 @@ fn test_cell_to_point() {
         cell_to_point(5209574053332910079_u64),
         Some((33.75, -11.178401873711776))
     )
+}
+
+// Get cell resolution
+#[test]
+fn test_get_cell_resolution() {
+    assert_eq!(cell_resolution(5209574053332910079_u64), 4_u8)
 }
