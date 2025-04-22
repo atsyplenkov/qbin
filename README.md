@@ -27,7 +27,7 @@ assert_eq!(coords, Some((33.75, -11.178401873711776)));
 ```
 
 ## Quadbin vs. Quadkey
-TBA
+TBA.
 
 ## Reasoning
 This repository is a proof-of-concept project, where I practised writing Rust code, and, moreover, writing Rust and R bindings as a single project. Recently, I was excited by the newly proposed  [`raquet`](https://github.com/CartoDB/raquet) format by [CARTO](https://github.com/CartoDB) for storing raster data in Parquet files and was eager to try it in my projects. However, the `raquet` file specification and conversion are written in pure Python and heavily relies on `gdal`; therefore, instead of implementing R-to-Python, I decided to rewrite everything in Rust, merely for fun and practice. This repository is the first step towards native, GDAL-free raster to `raquet` conversion.
