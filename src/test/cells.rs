@@ -1,5 +1,6 @@
 use crate::cells::*;
 use crate::types::Tile;
+use approx::assert_relative_eq;
 
 // Test validiy of Quadbin cell indexes
 #[test]
@@ -85,4 +86,30 @@ fn test_cell_to_point() {
 #[test]
 fn test_get_cell_resolution() {
     assert_eq!(cell_resolution(5209574053332910079_u64), 4_u8)
+}
+
+// Get parent cell
+#[test]
+fn test_cell_to_parent() {
+    let cases = [
+        (5209574053332910079_u64, 4_u8, 5209574053332910079_u64),
+        (5209574053332910079, 2, 5200813144682790911),
+        (5209574053332910079, 0, 5192650370358181887),
+    ];
+
+    for (cell, res, parent) in cases.iter() {
+        assert_eq!(cell_to_parent(*cell, *res), Some(*parent));
+    }
+
+    // Invalid resolution
+    assert_eq!(cell_to_parent(5209574053332910079_u64, 27), None);
+    assert_eq!(cell_to_parent(5209574053332910079_u64, 7), None);
+}
+
+// Estimate cell area
+#[test]
+fn test_cell_area() {
+    let area = cell_area(5209574053332910079_u64);
+
+    assert_relative_eq!(area.unwrap(), 6023040823252.6641, epsilon = 1e-2);
 }

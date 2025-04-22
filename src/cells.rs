@@ -111,3 +111,26 @@ pub fn cell_to_point(cell: u64) -> Option<(f64, f64)> {
 
     Some((lon, lat))
 }
+
+/// Compute the parent cell for a specific resolution.
+pub fn cell_to_parent(cell: u64, parent_resolution: u8) -> Option<u64> {
+    let resolution = cell_resolution(cell);
+
+    // TODO:
+    // Replace with Error
+    if parent_resolution > resolution {
+        return None;
+    }
+
+    let result = (cell & !(0x1F << 52))
+        | ((parent_resolution as u64) << 52)
+        | (FOOTER >> ((parent_resolution as u64) << 1));
+
+    Some(result)
+}
+
+/// Approximate area of a cell in square meters.
+pub fn cell_area(cell: u64) -> Option<f64> {
+    let tile = cell_to_tile(cell)?;
+    Some(tile_area(&tile))
+}
