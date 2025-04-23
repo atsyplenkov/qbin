@@ -19,9 +19,10 @@ pub fn is_valid_cell(cell: Cell) -> bool {
     (cell64 & header == header) && mode == 1 && resolution <= 26 && (cell64 & unused == unused)
 }
 
+// Internal functions ------------------------------------------------
+
 /// Convert a tile into a Quadbin cell.
-pub fn tile_to_cell(tile: Option<&Tile>) -> Option<u64> {
-    let tile = tile?;
+pub(crate) fn tile_to_cell(tile: Tile) -> Cell {
     let mut x = tile.x as u64;
     let mut y = tile.y as u64;
     let z = tile.z as u64;
@@ -44,12 +45,14 @@ pub fn tile_to_cell(tile: Option<&Tile>) -> Option<u64> {
     x = (x | (x << S[0])) & B[0];
     y = (y | (y << S[0])) & B[0];
 
-    Some(HEADER | (1 << 59) | ((z as u64) << 52) | ((x | (y << 1)) >> 12) | (FOOTER >> (z * 2)))
+    let cell =
+        HEADER | (1 << 59) | ((z as u64) << 52) | ((x | (y << 1)) >> 12) | (FOOTER >> (z * 2));
+    Cell::new(cell)
 }
 
 /// Convert Quadbin cell into a tile
 pub(crate) fn cell_to_tile(cell: Cell) -> Tile {
-    assert!(is_valid_cell(cell), "Quadbin is not valid");
+    assert!(is_valid_cell(cell), "Quadbin cell index is not valid");
 
     let cell64 = cell.get();
     let z = cell64 >> 52 & 31;
@@ -82,28 +85,24 @@ pub(crate) fn cell_to_tile(cell: Cell) -> Tile {
 }
 
 /// Convert a geographic point into a cell.
-pub fn point_to_cell(longitude: f64, latitude: f64, resolution: u8) -> Option<u64> {
+pub(crate) fn point_to_cell(longitude: f64, latitude: f64, resolution: u8) -> Cell {
     let long = clip_longitude(longitude);
     let lat = clip_latitude(latitude);
 
-    let tile = point_to_tile(long, lat, resolution);
+    let tile = Tile::from_point(long, lat, resolution);
 
-    tile_to_cell(Some(&tile))
+    tile.to_cell()
 }
 
 /// Convert cell into point
-pub fn cell_to_point(cell: Cell) -> Option<(f64, f64)> {
-    // TODO:
-    // Replace with proper Error
-    if !is_valid_cell(cell) {
-        return None;
-    }
+pub(crate) fn cell_to_point(cell: Cell) -> (f64, f64) {
+    assert!(is_valid_cell(cell), "Quadbin cell index is not valid");
 
-    let tile = cell_to_tile(cell);
-    let lat = Tile::to_latitude(&tile, 0.5);
-    let lon = Tile::to_longitude(&tile, 0.5);
+    let tile = cell.to_tile();
+    let lat = tile.to_latitude(0.5);
+    let lon = tile.to_longitude(0.5);
 
-    Some((lon, lat))
+    (lon, lat)
 }
 
 /// Compute the parent cell for a specific resolution.

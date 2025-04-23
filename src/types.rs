@@ -3,8 +3,6 @@ use crate::utils::*;
 use core::num::NonZeroU64;
 
 /// A single tile coordinates
-// TODO:
-// Add explanation of x, y and z
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub struct Tile {
     pub x: u32,
@@ -22,6 +20,11 @@ impl Tile {
     /// ```
     pub fn new(x: u32, y: u32, z: u8) -> Tile {
         Tile { x, y, z }
+    }
+
+    /// Convert to Quadbin cell.
+    pub fn to_cell(self) -> Cell {
+        tile_to_cell(self)
     }
 
     /// Compute the tile for a longitude and latitude in a specific resolution.
@@ -192,8 +195,18 @@ impl Cell {
     // TODO:
     // Add area_km2
 
-    /// Convert Quadbin cell into a tile.
+    /// Convert a Quadbin cell into a tile.
     pub fn to_tile(self) -> Tile {
         cell_to_tile(self)
+    }
+
+    /// Convert a Quadbin cell into geographic point.
+    pub fn to_point(self) -> (f64, f64) {
+        cell_to_point(self)
+    }
+
+    /// Convert a geographic point into a Quadbin cell.
+    pub fn from_point(longitude: f64, latitude: f64, resolution: u8) -> Cell {
+        point_to_cell(longitude, latitude, resolution)
     }
 }

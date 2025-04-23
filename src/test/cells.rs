@@ -23,9 +23,6 @@ fn test_is_cell_valid() {
 // https://github.com/CartoDB/quadbin-js/blob/40cce2fc6b9dc72bf19c69ffb6705f8b73d24b2c/test/index.spec.ts#L30-L34
 #[test]
 fn test_tile_and_cell_conversion() {
-    // Test early return
-    assert_eq!(tile_to_cell(None), None);
-
     // Test real examples
     // TODO:
     // Add more cases
@@ -38,7 +35,7 @@ fn test_tile_and_cell_conversion() {
 
     // Tile to cell conversion
     for (x, y, z, cell) in cases.iter() {
-        assert_eq!(tile_to_cell(Some(&Tile::new(*x, *y, *z))), Some(*cell));
+        assert_eq!(Tile::new(*x, *y, *z).to_cell(), Cell::new(*cell));
     }
 
     // Cell to tile conversion
@@ -68,7 +65,7 @@ fn test_point_to_cell() {
     ];
 
     for (x, y, res, cell) in cases.iter() {
-        assert_eq!(point_to_cell(*x, *y, *res), Some(*cell));
+        assert_eq!(Cell::from_point(*x, *y, *res), Cell::new(*cell));
     }
 }
 
@@ -76,8 +73,8 @@ fn test_point_to_cell() {
 #[test]
 fn test_cell_to_point() {
     assert_eq!(
-        cell_to_point(Cell::new(5209574053332910079_u64)),
-        Some((33.75, -11.178401873711776))
+        Cell::new(5209574053332910079_u64).to_point(),
+        (33.75, -11.178401873711776)
     )
 }
 
