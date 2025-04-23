@@ -25,14 +25,10 @@ pub(crate) fn point_to_tile_fraction(
     resolution: u8,
 ) -> (f64, f64, u8) {
     // Check resolution to avoid overflow
-    if resolution > MAX_RESOLUTION || resolution < MIN_RESOLUTION {
-        // TODO:
-        // Replace with Result for better error handling
-        panic!(
-            "Resolution should be between {} and {}",
-            MIN_RESOLUTION, MAX_RESOLUTION
-        );
-    }
+    assert!(
+        !(resolution > MAX_RESOLUTION || resolution < MIN_RESOLUTION),
+        "Resolution should be between 0 and 26"
+    );
 
     // Compute tile coordinates
     let z2: f64 = (1 << resolution) as f64;
@@ -106,6 +102,8 @@ pub(crate) fn tile_area(tile: &Tile) -> f64 {
     let z = tile.z;
 
     // Estimate area
+    // FIXME:
+    // Overflow happens on resolution > 15
     let index = std::cmp::min(AF_LEN as usize - 1, z as usize);
     let area_factor = AREA_FACTORS[index];
     let mut area = area_factor * REF_AREA / (1 << (z << 1)) as f64;
