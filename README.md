@@ -5,7 +5,7 @@
 [![Build & Test](https://github.com/atsyplenkov/quadbin/actions/workflows/rust.yml/badge.svg)](https://github.com/atsyplenkov/quadbin/actions/workflows/rust.yml)
 [![codecov](https://codecov.io/gh/atsyplenkov/quadbin/graph/badge.svg?token=4SZ4RI3ILS)](https://codecov.io/gh/atsyplenkov/quadbin)
 
-A Rust implementation of Quadbin, a hierarchical geospatial index tiling approach developed by [CARTO](https://github.com/CartoDB). Unlike [Microsoft's Bing Maps Tile System](https://docs.microsoft.com/en-us/bingmaps/articles/bing-maps-tile-system), Quadbin stores the information to uniquely identify any of the grid cells that result from uniformly subdividing a map in Mercator projection into four squares at different resolution levels, from 0 to 26 (less than 1 m² at the equator), in a 64-bit unsigned integer.
+A Rust implementation of Quadbin, a hierarchical geospatial index tiling approach developed by [CARTO](https://github.com/CartoDB). Like the [Microsoft's Bing Maps Tile System](https://docs.microsoft.com/en-us/bingmaps/articles/bing-maps-tile-system) (aka Quadkey), Quadbin uniformly subdivides a map in Mercator projection into four squares at different resolution levels, from 0 to 26 (less than 1 m² at the equator). However, unlike Quadkey, Quadbin stores the grid cell index in a 64-bit integer.
 
 This crate is a complete rewrite of the original implementation in [JavaScript](https://github.com/CartoDB/quadbin-js) and [Python](https://github.com/CartoDB/quadbin-py). Learn more about Quadbin in the [CARTO documentation](https://docs.carto.com/data-and-analysis/analytics-toolbox-for-snowflake/sql-reference/quadbin).
     
@@ -14,6 +14,7 @@ This crate is a complete rewrite of the original implementation in [JavaScript](
 
 ```rust
 use quadbin::Cell;
+use approx::assert_relative_eq;
 
 // Convert a point into a Quadbin cell
 let longitude = -3.7038;
@@ -25,6 +26,10 @@ assert_eq!(qb, Cell::new(5234261499580514303_u64));
 // Get a point from a Quadbin cell
 let coords = Cell::new(5209574053332910079_u64).to_point();
 assert_eq!(coords, (33.75, -11.178401873711776));
+
+// Quadbin resolution at equator in m²
+let area = Cell::from_point(0.0, 0.0, 26).area_m2();
+assert_relative_eq!(area, 0.36, epsilon = 1e-2)
 ```
 
 ## Quadbin vs. Quadkey

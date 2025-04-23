@@ -7,7 +7,7 @@ use core::num::NonZeroU64;
 pub struct Tile {
     pub x: u32,
     pub y: u32,
-    pub z: u8, // TODO: replace with NonZeroU8
+    pub z: u8,
 }
 
 impl Tile {
