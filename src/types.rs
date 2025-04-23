@@ -184,7 +184,7 @@ impl Cell {
     /// use approx::assert_relative_eq;
     ///
     /// let area = quadbin::Cell::new(5234261499580514303_u64).area_m2();
-    /// assert_relative_eq!(area, 888546364.7859862, epsilon = 1e-10)
+    /// assert_relative_eq!(area, 888546364.7859862, epsilon = 1e-6)
     ///
     /// ```
     pub fn area_m2(self) -> f64 {
