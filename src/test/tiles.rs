@@ -1,5 +1,5 @@
-use crate::tiles::*;
 use crate::types::Tile;
+use crate::utils::point_cover;
 
 #[test]
 fn test_tile_hashing() {
@@ -16,9 +16,9 @@ fn test_tile_hashing() {
 
     for (tile, hash) in cases.iter() {
         // Tile to hash
-        assert_eq!(to_tile_hash(tile), *hash);
+        assert_eq!(Tile::to_hash(tile), *hash);
         // Hash to tile
-        assert_eq!(from_tile_hash(*hash), *tile);
+        assert_eq!(Tile::from_hash(*hash), *tile);
     }
 }
 

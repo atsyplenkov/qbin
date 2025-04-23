@@ -49,7 +49,7 @@ pub(crate) fn point_to_tile_fraction(
 }
 
 /// Compute the tile for a longitude and latitude in a specific resolution.
-pub fn point_to_tile(longitude: f64, latitude: f64, resolution: u8) -> Tile {
+pub(crate) fn point_to_tile(longitude: f64, latitude: f64, resolution: u8) -> Tile {
     let (x, y, z) = point_to_tile_fraction(longitude, latitude, resolution);
     let x: u32 = x.floor() as u32;
     let y: u32 = y.floor() as u32;
@@ -57,7 +57,7 @@ pub fn point_to_tile(longitude: f64, latitude: f64, resolution: u8) -> Tile {
 }
 
 /// Compute the latitude for a tile with an offset.
-pub fn tile_to_latitude(tile: &Tile, offset: f64) -> f64 {
+pub(crate) fn tile_to_latitude(tile: &Tile, offset: f64) -> f64 {
     // Check if offset is between 0 and 1
     if offset < 0.0 || offset > 1.0 {
         panic!("Offset should be between 0 and 1");
@@ -73,7 +73,7 @@ pub fn tile_to_latitude(tile: &Tile, offset: f64) -> f64 {
 }
 
 /// Compute the longitude for a tile with an offset.
-pub fn tile_to_longitude(tile: &Tile, offset: f64) -> f64 {
+pub(crate) fn tile_to_longitude(tile: &Tile, offset: f64) -> f64 {
     // Check if offset is between 0 and 1
     if offset < 0.0 || offset > 1.0 {
         panic!("Offset should be between 0 and 1");
@@ -99,7 +99,7 @@ pub(crate) fn tile_scalefactor(tile: &Tile) -> f64 {
 }
 
 /// Approximate area of a tile in square meters.
-pub fn tile_area(tile: &Tile) -> f64 {
+pub(crate) fn tile_area(tile: &Tile) -> f64 {
     // Get Tile coords
     let x = tile.x;
     let y = tile.y as f64;
@@ -128,18 +128,6 @@ pub fn tile_area(tile: &Tile) -> f64 {
 }
 
 /// Compute the sibling (neighbour) tile in a specific direction.
-///
-/// # Parameters
-/// - `tile`: Reference to the tile ([Tile](cci:2://file:///home/atsyp/Projects/quadbin/src/types.rs:4:0-8:1)) to find a neighbour for.
-/// - `direction`: Direction as an integer:
-///     - `0`: up
-///     - `1`: right
-///     - `2`: left
-///     - `3`: down
-///
-/// # Returns
-/// - `Some(Tile)`: The sibling tile in the specified direction, if it exists.
-/// - `None`: If there is no valid sibling in that direction.
 pub fn tile_sibling(tile: &Tile, direction: u8) -> Option<Tile> {
     // Early return for a low level == no neighbors
     if tile.z == 0_u8 {
@@ -190,4 +178,37 @@ pub fn tile_sibling(tile: &Tile, direction: u8) -> Option<Tile> {
     }
 
     Some(Tile::new(x, y, z))
+}
+
+/// Compute a hash from the tile.
+pub(crate) fn to_tile_hash(tile: &Tile) -> u64 {
+    let x = tile.x as u64;
+    let y = tile.y as u64;
+    let z = tile.z as u64;
+
+    let dim = 2 * (1 << z);
+
+    let hash = ((dim * y + x) * 32) + z;
+
+    hash
+}
+
+/// Compute a tile from the hash.
+pub(crate) fn from_tile_hash(tile_hash: u64) -> Tile {
+    // TODO:
+    // Return None if hash is invalid
+    // Understand why do we need tile hashing
+    let z = tile_hash % 32_u64;
+    let dim = 2_u64 * (1_u64 << z);
+    let xy = (tile_hash - z) / 32;
+    let x = xy % dim;
+    let y = ((xy - x) / dim) % dim;
+
+    Tile::new(x as u32, y as u32, z as u8)
+}
+
+/// Return the tiles hashes that cover a point.
+pub fn point_cover(longitude: f64, latitude: f64, resolution: u8) -> u64 {
+    let tile = Tile::from_point(longitude, latitude, resolution);
+    Tile::to_hash(&tile)
 }

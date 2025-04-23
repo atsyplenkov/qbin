@@ -18,15 +18,15 @@ fn test_point_to_tile_fraction() {
 #[test]
 fn test_point_to_tile() {
     // X axis
-    assert_eq!(point_to_tile(-180.0, 0.0, 0), Tile::new(0, 0, 0));
-    assert_eq!(point_to_tile(-180.0, 85.0, 2), Tile::new(0, 0, 2));
-    assert_eq!(point_to_tile(180.0, 85.0, 2), Tile::new(0, 0, 2));
-    assert_eq!(point_to_tile(-185.0, 85.0, 2), Tile::new(3, 0, 2));
-    assert_eq!(point_to_tile(185.0, 85.0, 2), Tile::new(0, 0, 2));
+    assert_eq!(Tile::from_point(-180.0, 0.0, 0), Tile::new(0, 0, 0));
+    assert_eq!(Tile::from_point(-180.0, 85.0, 2), Tile::new(0, 0, 2));
+    assert_eq!(Tile::from_point(180.0, 85.0, 2), Tile::new(0, 0, 2));
+    assert_eq!(Tile::from_point(-185.0, 85.0, 2), Tile::new(3, 0, 2));
+    assert_eq!(Tile::from_point(185.0, 85.0, 2), Tile::new(0, 0, 2));
 
     // Y-axis
-    assert_eq!(point_to_tile(-175.0, -95.0, 2), Tile::new(0, 3, 2));
-    assert_eq!(point_to_tile(-175.0, 95.0, 2), Tile::new(0, 0, 2));
+    assert_eq!(Tile::from_point(-175.0, -95.0, 2), Tile::new(0, 3, 2));
+    assert_eq!(Tile::from_point(-175.0, 95.0, 2), Tile::new(0, 0, 2));
 }
 
 // Estimate tile's area
@@ -45,7 +45,7 @@ fn test_tile_area() {
     ];
 
     for (tile, expected) in cases.iter() {
-        assert_relative_eq!(tile_area(tile), *expected, epsilon = ACC);
+        assert_relative_eq!(Tile::area(tile), *expected, epsilon = ACC);
     }
 }
 
@@ -66,16 +66,16 @@ fn test_tile_conversion() {
     assert_eq!(tile.z, 10_u8);
 
     // Convert back to coordinates
-    let new_lon = tile_to_longitude(&tile, 0.0);
-    let new_lat = tile_to_latitude(&tile, 0.0);
+    let new_lon = Tile::to_longitude(&tile, 0.0);
+    let new_lat = Tile::to_latitude(&tile, 0.0);
 
     // Check conversion with approximate equality
     assert_relative_eq!(new_lat, 45.08903556483104_f64, epsilon = ACC);
     assert_relative_eq!(new_lon, lon, epsilon = ACC);
 
     // Check offset with approximate equality
-    let new_lon_offset = tile_to_longitude(&tile, 0.5);
-    let new_lat_offset = tile_to_latitude(&tile, 0.5);
+    let new_lon_offset = Tile::to_longitude(&tile, 0.5);
+    let new_lat_offset = Tile::to_latitude(&tile, 0.5);
     assert_relative_eq!(new_lat_offset, 44.96479793033102_f64, epsilon = ACC);
     assert_relative_eq!(new_lon_offset, -44.82421875_f64, epsilon = ACC);
 }

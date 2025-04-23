@@ -106,8 +106,8 @@ pub fn cell_to_point(cell: u64) -> Option<(f64, f64)> {
     }
 
     let tile = cell_to_tile(cell)?;
-    let lat = tile_to_latitude(&tile, 0.5);
-    let lon = tile_to_longitude(&tile, 0.5);
+    let lat = Tile::to_latitude(&tile, 0.5);
+    let lon = Tile::to_longitude(&tile, 0.5);
 
     Some((lon, lat))
 }
@@ -132,5 +132,5 @@ pub fn cell_to_parent(cell: u64, parent_resolution: u8) -> Option<u64> {
 /// Approximate area of a cell in square meters.
 pub fn cell_area(cell: u64) -> Option<f64> {
     let tile = cell_to_tile(cell)?;
-    Some(tile_area(&tile))
+    Some(Tile::area(&tile))
 }
