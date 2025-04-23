@@ -1,5 +1,5 @@
 use crate::cells::*;
-use crate::types::Tile;
+use crate::types::*;
 use approx::assert_relative_eq;
 
 // Test validiy of Quadbin cell indexes
@@ -10,13 +10,12 @@ fn test_is_cell_valid() {
         (5192650370358181887_u64, true),
         (5202361257054699519_u64, true),
         (5291729562728627583_u64, true),
-        (0_u64, false),
         (5209574053332910078_u64, false),
         (6362495557939757055_u64, false),
     ];
 
     for (cell, expected) in cases.iter() {
-        assert_eq!(is_valid_cell(*cell), *expected);
+        assert_eq!(is_valid_cell(Cell::new(*cell)), *expected);
     }
 }
 
@@ -44,7 +43,7 @@ fn test_tile_and_cell_conversion() {
 
     // Cell to tile conversion
     for (x, y, z, cell) in cases.iter() {
-        assert_eq!(cell_to_tile(*cell), Some(Tile::new(*x, *y, *z)));
+        assert_eq!(Cell::new(*cell).to_tile(), Tile::new(*x, *y, *z));
     }
 }
 
@@ -77,7 +76,7 @@ fn test_point_to_cell() {
 #[test]
 fn test_cell_to_point() {
     assert_eq!(
-        cell_to_point(5209574053332910079_u64),
+        cell_to_point(Cell::new(5209574053332910079_u64)),
         Some((33.75, -11.178401873711776))
     )
 }
@@ -85,31 +84,32 @@ fn test_cell_to_point() {
 // Get cell resolution
 #[test]
 fn test_get_cell_resolution() {
-    assert_eq!(cell_resolution(5209574053332910079_u64), 4_u8)
+    let qb_cell = Cell::new(5209574053332910079_u64);
+    assert_eq!(Cell::resolution(qb_cell), 4_u8)
 }
 
 // Get parent cell
 #[test]
 fn test_cell_to_parent() {
     let cases = [
-        (5209574053332910079_u64, 4_u8, 5209574053332910079_u64),
         (5209574053332910079, 2, 5200813144682790911),
         (5209574053332910079, 0, 5192650370358181887),
     ];
 
     for (cell, res, parent) in cases.iter() {
-        assert_eq!(cell_to_parent(*cell, *res), Some(*parent));
+        assert_eq!(Cell::new(*cell).parent(*res), Cell::new(*parent));
     }
-
-    // Invalid resolution
-    assert_eq!(cell_to_parent(5209574053332910079_u64, 27), None);
-    assert_eq!(cell_to_parent(5209574053332910079_u64, 7), None);
+}
+#[test]
+#[should_panic(expected = "parent resolution should be greater than current resolution")]
+fn test_cell_to_parent_invalid_resolution() {
+    let cell = Cell::new(5209574053332910079);
+    let _ = cell.parent(4);
 }
 
 // Estimate cell area
 #[test]
 fn test_cell_area() {
-    let area = cell_area(5209574053332910079_u64);
-
-    assert_relative_eq!(area.unwrap(), 6023040823252.6641, epsilon = 1e-2);
+    let area = Cell::new(5209574053332910079_u64).area_m2();
+    assert_relative_eq!(area, 6023040823252.6641, epsilon = 1e-2);
 }

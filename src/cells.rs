@@ -1,12 +1,13 @@
 use crate::constants::*;
-use crate::types::Tile;
+use crate::types::*;
 use crate::utils::*;
 
 /// Quadbin cell validation
-pub fn is_valid_cell(cell: u64) -> bool {
+pub fn is_valid_cell(cell: Cell) -> bool {
+    let cell64 = cell.get();
     let header = HEADER;
-    let mode = (cell >> 59) & 7;
-    let resolution = (cell >> 52) & 0x1F;
+    let mode = (cell64 >> 59) & 7;
+    let resolution = (cell64 >> 52) & 0x1F;
     let resolution_shift = resolution.saturating_mul(4);
     let unused = if resolution_shift >= 64 {
         0
@@ -15,12 +16,7 @@ pub fn is_valid_cell(cell: u64) -> bool {
     };
 
     // Checks
-    (cell & header == header) && mode == 1 && resolution <= 26 && (cell & unused == unused)
-}
-
-/// Get resolution of an Quadbin cell
-pub fn cell_resolution(cell: u64) -> u8 {
-    ((cell >> 52) & 0x1F) as u8
+    (cell64 & header == header) && mode == 1 && resolution <= 26 && (cell64 & unused == unused)
 }
 
 /// Convert a tile into a Quadbin cell.
@@ -52,14 +48,12 @@ pub fn tile_to_cell(tile: Option<&Tile>) -> Option<u64> {
 }
 
 /// Convert Quadbin cell into a tile
-pub fn cell_to_tile(cell: u64) -> Option<Tile> {
-    // TODO:
-    // Replace with proper Error
-    if !is_valid_cell(cell) {
-        return None;
-    }
-    let z = cell >> 52 & 31;
-    let q = (cell & FOOTER) << 12;
+pub(crate) fn cell_to_tile(cell: Cell) -> Tile {
+    assert!(is_valid_cell(cell), "Quadbin is not valid");
+
+    let cell64 = cell.get();
+    let z = cell64 >> 52 & 31;
+    let q = (cell64 & FOOTER) << 12;
     let mut x = q;
     let mut y = q >> 1;
 
@@ -84,7 +78,7 @@ pub fn cell_to_tile(cell: u64) -> Option<Tile> {
     x = x >> (32 - z);
     y = y >> (32 - z);
 
-    Some(Tile::new(x as u32, y as u32, z as u8))
+    Tile::new(x as u32, y as u32, z as u8)
 }
 
 /// Convert a geographic point into a cell.
@@ -98,14 +92,14 @@ pub fn point_to_cell(longitude: f64, latitude: f64, resolution: u8) -> Option<u6
 }
 
 /// Convert cell into point
-pub fn cell_to_point(cell: u64) -> Option<(f64, f64)> {
+pub fn cell_to_point(cell: Cell) -> Option<(f64, f64)> {
     // TODO:
     // Replace with proper Error
     if !is_valid_cell(cell) {
         return None;
     }
 
-    let tile = cell_to_tile(cell)?;
+    let tile = cell_to_tile(cell);
     let lat = Tile::to_latitude(&tile, 0.5);
     let lon = Tile::to_longitude(&tile, 0.5);
 
@@ -113,24 +107,17 @@ pub fn cell_to_point(cell: u64) -> Option<(f64, f64)> {
 }
 
 /// Compute the parent cell for a specific resolution.
-pub fn cell_to_parent(cell: u64, parent_resolution: u8) -> Option<u64> {
-    let resolution = cell_resolution(cell);
+pub(crate) fn cell_to_parent(cell: Cell, parent_resolution: u8) -> Cell {
+    // Check resolution
+    let resolution = cell.resolution();
+    assert!(
+        parent_resolution < resolution,
+        "parent resolution should be greater than current resolution"
+    );
 
-    // TODO:
-    // Replace with Error
-    if parent_resolution > resolution {
-        return None;
-    }
-
-    let result = (cell & !(0x1F << 52))
+    let result = (cell.get() & !(0x1F << 52))
         | ((parent_resolution as u64) << 52)
         | (FOOTER >> ((parent_resolution as u64) << 1));
 
-    Some(result)
-}
-
-/// Approximate area of a cell in square meters.
-pub fn cell_area(cell: u64) -> Option<f64> {
-    let tile = cell_to_tile(cell)?;
-    Some(Tile::area(&tile))
+    Cell::new(result)
 }

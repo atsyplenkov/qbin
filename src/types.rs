@@ -1,5 +1,6 @@
 use crate::cells::*;
 use crate::utils::*;
+use core::num::NonZeroU64;
 
 /// A single tile coordinates
 // TODO:
@@ -8,7 +9,7 @@ use crate::utils::*;
 pub struct Tile {
     pub x: u32,
     pub y: u32,
-    pub z: u8,
+    pub z: u8, // TODO: replace with NonZeroU8
 }
 
 impl Tile {
@@ -131,20 +132,25 @@ impl Tile {
 /// - Remaining bits encode the cell's XY position in Morton order (0-51).
 ///
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub struct Cell(u64); // TODO: replace with NonZeroU64
+pub struct Cell(NonZeroU64);
 
 impl Cell {
-    /// Create new
+    /// Returns the inner u64 value of the cell.
+    pub fn get(&self) -> u64 {
+        self.0.get()
+    }
+
+    /// Create new cell index
     ///
     /// # Example
     /// ```
     /// let qb_cell = quadbin::Cell::new(5234261499580514303);
     /// ```
-    pub fn new(cell: u64) -> Cell {
-        Cell(cell)
+    pub fn new(value: u64) -> Cell {
+        Cell(NonZeroU64::new(value).expect("non-zero cell index"))
     }
 
-    /// Returns the resolution of the index.
+    /// Returns the resolution of the cell index.
     ///
     /// # Example
     /// ```
@@ -153,6 +159,41 @@ impl Cell {
     /// assert_eq!(res, 10)
     /// ```
     pub fn resolution(self) -> u8 {
-        cell_resolution(self.0)
+        ((self.0.get() >> 52) & 0x1F) as u8
+    }
+
+    /// Compute the parent cell for a specific resolution.
+    ///
+    /// # Example
+    /// ```
+    /// let qb_cell = quadbin::Cell::new(5209574053332910079);
+    /// let parent = quadbin::Cell::parent(qb_cell, 2_u8);
+    /// assert_eq!(parent, quadbin::Cell::new(5200813144682790911))
+    /// ```
+    pub fn parent(self, parent_resolution: u8) -> Cell {
+        cell_to_parent(self, parent_resolution)
+    }
+
+    /// Computes the area of this Quadbin cell, in m².
+    ///
+    /// # Example
+    /// ```
+    /// use approx::assert_relative_eq;
+    ///
+    /// let area = quadbin::Cell::new(5234261499580514303_u64).area_m2();
+    /// assert_relative_eq!(area, 888546364.7859862, epsilon = 1e-10)
+    ///
+    /// ```
+    pub fn area_m2(self) -> f64 {
+        let tile = self.to_tile();
+        Tile::area(&tile)
+    }
+
+    // TODO:
+    // Add area_km2
+
+    /// Convert Quadbin cell into a tile.
+    pub fn to_tile(self) -> Tile {
+        cell_to_tile(self)
     }
 }
