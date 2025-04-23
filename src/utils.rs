@@ -26,7 +26,7 @@ pub(crate) fn point_to_tile_fraction(
 ) -> (f64, f64, u8) {
     // Check resolution to avoid overflow
     assert!(
-        !(resolution > MAX_RESOLUTION || resolution < MIN_RESOLUTION),
+        (resolution <= MAX_RESOLUTION),
         "Resolution should be between 0 and 26"
     );
 
@@ -55,9 +55,10 @@ pub(crate) fn point_to_tile(longitude: f64, latitude: f64, resolution: u8) -> Ti
 /// Compute the latitude for a tile with an offset.
 pub(crate) fn tile_to_latitude(tile: &Tile, offset: f64) -> f64 {
     // Check if offset is between 0 and 1
-    if offset < 0.0 || offset > 1.0 {
-        panic!("Offset should be between 0 and 1");
-    }
+    assert!(
+        (0.0..=1.0).contains(&offset),
+        "Offset should be between 0 and 1"
+    );
 
     // Get Tile coords
     let y = tile.y as f64;
@@ -71,9 +72,10 @@ pub(crate) fn tile_to_latitude(tile: &Tile, offset: f64) -> f64 {
 /// Compute the longitude for a tile with an offset.
 pub(crate) fn tile_to_longitude(tile: &Tile, offset: f64) -> f64 {
     // Check if offset is between 0 and 1
-    if offset < 0.0 || offset > 1.0 {
-        panic!("Offset should be between 0 and 1");
-    }
+    assert!(
+        (0.0..=1.0).contains(&offset),
+        "Offset should be between 0 and 1"
+    );
 
     // Get Tile coords
     let x = tile.x as f64;
@@ -130,6 +132,7 @@ pub(crate) fn tile_area(tile: &Tile) -> f64 {
 /// Compute the sibling (neighbour) tile in a specific direction.
 pub(crate) fn tile_sibling(tile: &Tile, direction: u8) -> Option<Tile> {
     // Early return for a low level == no neighbors
+    // TODO: Think about what should one return instead of None
     if tile.z == 0_u8 {
         return None;
     }
@@ -188,9 +191,7 @@ pub(crate) fn to_tile_hash(tile: &Tile) -> u64 {
 
     let dim = 2 * (1 << z);
 
-    let hash = ((dim * y + x) * 32) + z;
-
-    hash
+    ((dim * y + x) * 32) + z
 }
 
 /// Compute a tile from the hash.

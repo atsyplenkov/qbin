@@ -7,23 +7,22 @@ pub(crate) const MIN_LATITUDE: f64 = -89.0;
 // Resolution
 // https://docs.carto.com/data-and-analysis/analytics-toolbox-for-postgresql/key-concepts/spatial-indexes#quadbin
 pub(crate) const MAX_RESOLUTION: u8 = 26;
-pub(crate) const MIN_RESOLUTION: u8 = 0;
 
 // Area estimation
 pub(crate) const REF_AREA: f64 = 508164597540055.75;
 pub(crate) const AREA_FACTORS: [f64; 12] = [
     1.0,
-    1.003741849761155,
-    1.8970972739048304,
-    2.7118085839548,
-    3.0342500406694364,
-    3.1231014735135538,
-    3.1457588045774316,
-    3.151449027223487,
-    3.1528731677136914,
-    3.1532293013524657,
-    3.1533183409109418,
-    3.1533406011847736,
+    1.003_741_849_761_155,
+    1.897_097_273_904_830_4,
+    2.711_808_583_954_8,
+    3.034_250_040_669_436_4,
+    3.123_101_473_513_554,
+    3.145_758_804_577_431_6,
+    3.151_449_027_223_487,
+    3.152_873_167_713_691_4,
+    3.153_229_301_352_465_7,
+    3.153_318_340_910_941_8,
+    3.153_340_601_184_773_6,
 ];
 pub(crate) const AF_LEN: u8 = AREA_FACTORS.len() as u8;
 

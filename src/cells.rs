@@ -27,8 +27,8 @@ pub(crate) fn tile_to_cell(tile: Tile) -> Cell {
     let mut y = tile.y as u64;
     let z = tile.z as u64;
 
-    x = x << (32 - z);
-    y = y << (32 - z);
+    x <<= 32 - z;
+    y <<= 32 - z;
 
     x = (x | (x << S[4])) & B[4];
     y = (y | (y << S[4])) & B[4];
@@ -45,8 +45,7 @@ pub(crate) fn tile_to_cell(tile: Tile) -> Cell {
     x = (x | (x << S[0])) & B[0];
     y = (y | (y << S[0])) & B[0];
 
-    let cell =
-        HEADER | (1 << 59) | ((z as u64) << 52) | ((x | (y << 1)) >> 12) | (FOOTER >> (z * 2));
+    let cell = HEADER | (1 << 59) | (z << 52) | ((x | (y << 1)) >> 12) | (FOOTER >> (z * 2));
     Cell::new(cell)
 }
 
@@ -55,13 +54,13 @@ pub(crate) fn cell_to_tile(cell: Cell) -> Tile {
     assert!(is_valid_cell(cell), "Quadbin cell index is not valid");
 
     let cell64 = cell.get();
-    let z = cell64 >> 52 & 31;
+    let z = (cell64 >> 52) & 31;
     let q = (cell64 & FOOTER) << 12;
     let mut x = q;
     let mut y = q >> 1;
 
-    x = x & B[0];
-    y = y & B[0];
+    x &= B[0];
+    y &= B[0];
 
     x = (x | (x >> S[0])) & B[1];
     y = (y | (y >> S[0])) & B[1];
@@ -78,8 +77,8 @@ pub(crate) fn cell_to_tile(cell: Cell) -> Tile {
     x = (x | (x >> S[4])) & B[5];
     y = (y | (y >> S[4])) & B[5];
 
-    x = x >> (32 - z);
-    y = y >> (32 - z);
+    x >>= 32 - z;
+    y >>= 32 - z;
 
     Tile::new(x as u32, y as u32, z as u8)
 }
