@@ -10,14 +10,6 @@ pub struct Tile {
     pub z: u8,
 }
 
-// Direction for sibling detection
-// enum Direction {
-//     Up,
-//     Right,
-//     Left,
-//     Down,
-// }
-
 impl Tile {
     /// Create a new tile.
     ///
@@ -45,7 +37,7 @@ impl Tile {
         point_to_tile(longitude, latitude, resolution)
     }
 
-    /// Approximate tile area in square meters
+    /// Approximate tile area in square meters.
     ///
     /// # Examples
     /// ```
@@ -62,7 +54,9 @@ impl Tile {
         tile_area(&self)
     }
 
-    /// Return tile's latitude
+    /// Return tile's latitude.
+    ///
+    /// See also [Tile::to_longitude].
     ///
     /// # Examples
     /// ```
@@ -81,6 +75,8 @@ impl Tile {
 
     /// Return tile's longitude.
     ///
+    /// See also [Tile::to_latitude].
+    ///
     /// # Examples
     /// ```
     /// use quadbin::types::Tile;
@@ -96,10 +92,10 @@ impl Tile {
         tile_to_longitude(&self, offset)
     }
 
-    // /// Get tile's siblings
-    // pub fn get_sibling(&self, direction: &Direction) -> Option<Self> {
-    //     tile_sibling(&self, direction)
-    // }
+    /// Get tile's siblings.
+    pub fn get_sibling(&self, direction: u8) -> Option<Self> {
+        tile_sibling(&self, direction)
+    }
 
     /// Compute a hash from the tile.
     pub fn to_hash(&self) -> u64 {

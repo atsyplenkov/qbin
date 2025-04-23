@@ -1,3 +1,3 @@
 mod cells;
-mod tiles;
+mod hashing;
 mod utils;
