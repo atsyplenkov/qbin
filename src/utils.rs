@@ -99,14 +99,16 @@ pub(crate) fn tile_area(tile: &Tile) -> f64 {
     // Get Tile coords
     let x = tile.x;
     let y = tile.y as f64;
-    let z = tile.z;
+    let z = tile.z as usize;
 
     // Estimate area
-    // FIXME:
-    // Overflow happens on resolution > 15
-    let index = std::cmp::min(AF_LEN as usize - 1, z as usize);
+    let index = std::cmp::min(AF_LEN as usize - 1, z);
     let area_factor = AREA_FACTORS[index];
-    let mut area = area_factor * REF_AREA / (1 << (z << 1)) as f64;
+
+    // !NB: Use saturation to avoid overflow for high z values
+    let shift_amount = z.saturating_mul(2);
+    let denominator = 1u64 << std::cmp::min(shift_amount, 63);
+    let mut area = area_factor * REF_AREA / denominator as f64;
 
     // Adjust centering
     let center_y = if z == 0 { 0 } else { 1 << (z - 1) };
@@ -115,7 +117,7 @@ pub(crate) fn tile_area(tile: &Tile) -> f64 {
     if y < center_y - 1.0 || y > center_y {
         let z_factor = |y_val: f64| -> f64 {
             // Create a new tile with the same x and z but different y
-            let temp_tile = Tile::new(x, y_val as u32, z);
+            let temp_tile = Tile::new(x, y_val as u32, z as u8);
             tile_scalefactor(&temp_tile).powf(2.0)
         };
 
