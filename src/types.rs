@@ -218,7 +218,7 @@ impl Cell {
     pub fn from_point(longitude: f64, latitude: f64, resolution: u8) -> Cell {
         point_to_cell(longitude, latitude, resolution)
     }
-    
+
     /// Convert a Quadbin cell into a tile.
     pub fn to_tile(self) -> Tile {
         cell_to_tile(self)
