@@ -1,3 +1,4 @@
+use crate::cells::*;
 use crate::utils::*;
 
 /// A single tile coordinates
@@ -16,9 +17,7 @@ impl Tile {
     /// # Examples
     ///
     /// ```
-    /// use quadbin::types::Tile;
-    ///
-    /// let tile = Tile::new(8108, 14336, 14);
+    /// let tile = quadbin::Tile::new(8108, 14336, 14);
     /// ```
     pub fn new(x: u32, y: u32, z: u8) -> Tile {
         Tile { x, y, z }
@@ -28,7 +27,7 @@ impl Tile {
     ///
     /// # Examples
     /// ```
-    /// use quadbin::types::Tile;
+    /// use quadbin::Tile;
     /// // Create a tile from geographic coordinates:
     /// let tile = Tile::from_point(-175.0, 95.0, 2);
     /// assert_eq!(tile, Tile::new(0, 0, 2));
@@ -41,7 +40,7 @@ impl Tile {
     ///
     /// # Examples
     /// ```
-    /// use quadbin::types::Tile;
+    /// use quadbin::Tile;
     /// use approx::assert_relative_eq;
     ///
     /// // Create new tile
@@ -60,7 +59,7 @@ impl Tile {
     ///
     /// # Examples
     /// ```
-    /// use quadbin::types::Tile;
+    /// use quadbin::Tile;
     /// use approx::assert_relative_eq;
     ///
     /// // Create new tile
@@ -79,7 +78,7 @@ impl Tile {
     ///
     /// # Examples
     /// ```
-    /// use quadbin::types::Tile;
+    /// use quadbin::Tile;
     /// use approx::assert_relative_eq;
     ///
     /// // Create new tile
@@ -107,5 +106,53 @@ impl Tile {
     /// Compute a tile from the hash.
     pub fn from_hash(tile_hash: u64) -> Tile {
         from_tile_hash(tile_hash)
+    }
+}
+
+// --------------------------------------------------------
+
+/// Represents a cell in the Quadbin grid system at a
+/// particular resolution.
+///
+/// The index is encoded on 64-bit with the following bit layout:
+///
+/// ```text
+///  ┏━┳━━━┳━━━━┳━━━━━━━┳━━━━━━━━━━━┈┈┈┈┈┈┈┈━━━━━━━━┓
+///  ┃U┃ H ┃ M  ┃   R   ┃           Morton          ┃
+///  ┗━┻━━━┻━━━━┻━━━━━━━┻━━━━━━━━━━━┈┈┈┈┈┈┈┈━━━━━━━━┛
+/// 64 63   59   52     51                          0
+/// ```
+///
+/// Where:
+/// - `U` are unused reserved bit, always set to 0 (bit 63).
+/// - `H` is the header bit (bit 62, always 1).
+/// - `M` is the index mode, always set to 1, coded on 4 bits (59-62).
+/// - `R` is the cell resolution, in [0; 26], coded on bits 52-56.
+/// - Remaining bits encode the cell's XY position in Morton order (0-51).
+///
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub struct Cell(u64); // TODO: replace with NonZeroU64
+
+impl Cell {
+    /// Create new
+    ///
+    /// # Example
+    /// ```
+    /// let qb_cell = quadbin::Cell::new(5234261499580514303);
+    /// ```
+    pub fn new(cell: u64) -> Cell {
+        Cell(cell)
+    }
+
+    /// Returns the resolution of the index.
+    ///
+    /// # Example
+    /// ```
+    /// let qb_cell = quadbin::Cell::new(5234261499580514303);
+    /// let res = qb_cell.resolution();
+    /// assert_eq!(res, 10)
+    /// ```
+    pub fn resolution(self) -> u8 {
+        cell_resolution(self.0)
     }
 }
