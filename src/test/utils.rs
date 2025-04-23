@@ -31,7 +31,7 @@ fn test_point_to_tile() {
 
 // Estimate tile's area
 // TODO:
-// Investigate why it differs from Python's version.
+// Investigate why it differs from Python's tests.
 // I have the impression that Python's code is erratic.
 #[test]
 fn test_tile_area() {
@@ -47,7 +47,7 @@ fn test_tile_area() {
     ];
 
     for (tile, expected) in cases.iter() {
-        assert_relative_eq!(Tile::area(tile), *expected, epsilon = ACC);
+        assert_relative_eq!(tile.area(), *expected, epsilon = ACC);
     }
 }
 
@@ -68,16 +68,16 @@ fn test_tile_conversion() {
     assert_eq!(tile.z, 10_u8);
 
     // Convert back to coordinates
-    let new_lon = Tile::to_longitude(&tile, 0.0);
-    let new_lat = Tile::to_latitude(&tile, 0.0);
+    let new_lon = tile.to_longitude(0.0);
+    let new_lat = tile.to_latitude(0.0);
 
     // Check conversion with approximate equality
     assert_relative_eq!(new_lat, 45.08903556483104_f64, epsilon = ACC);
     assert_relative_eq!(new_lon, lon, epsilon = ACC);
 
     // Check offset with approximate equality
-    let new_lon_offset = Tile::to_longitude(&tile, 0.5);
-    let new_lat_offset = Tile::to_latitude(&tile, 0.5);
+    let new_lon_offset = tile.to_longitude(0.5);
+    let new_lat_offset = tile.to_latitude(0.5);
     assert_relative_eq!(new_lat_offset, 44.96479793033102_f64, epsilon = ACC);
     assert_relative_eq!(new_lon_offset, -44.82421875_f64, epsilon = ACC);
 }
@@ -85,17 +85,17 @@ fn test_tile_conversion() {
 #[test]
 fn test_tile_scalefactor() {
     assert_relative_eq!(
-        tile_scalefactor(&Tile::new(384, 368, 10)),
+        tile_scalefactor(Tile::new(384, 368, 10)),
         0.7075410884638627_f64,
         epsilon = ACC
     );
     assert_relative_eq!(
-        tile_scalefactor(&Tile::new(384, 368, 26)),
+        tile_scalefactor(Tile::new(384, 368, 26)),
         0.08626970361752928_f64,
         epsilon = ACC
     );
     assert_relative_eq!(
-        tile_scalefactor(&Tile::new(100, 100, 10)),
+        tile_scalefactor(Tile::new(100, 100, 10)),
         0.15910754230624527_f64,
         epsilon = ACC
     );
@@ -105,10 +105,10 @@ fn test_tile_scalefactor() {
 #[test]
 fn test_tile_sibling() {
     // Test zoom level 0 (should always return None)
-    assert_eq!(Tile::get_sibling(&Tile::new(0, 0, 0), 0), None); // UP
-    assert_eq!(Tile::get_sibling(&Tile::new(0, 0, 0), 1), None); // RIGHT
-    assert_eq!(Tile::get_sibling(&Tile::new(0, 0, 0), 2), None); // LEFT
-    assert_eq!(Tile::get_sibling(&Tile::new(0, 0, 0), 3), None); // DOWN
+    assert_eq!(Tile::new(0, 0, 0).get_sibling(0), None); // UP
+    assert_eq!(Tile::new(0, 0, 0).get_sibling(1), None); // RIGHT
+    assert_eq!(Tile::new(0, 0, 0).get_sibling(2), None); // LEFT
+    assert_eq!(Tile::new(0, 0, 0).get_sibling(3), None); // DOWN
 
     // Test UP direction (0)
     let up_cases = [
@@ -117,7 +117,7 @@ fn test_tile_sibling() {
     ];
 
     for (tile, expected) in up_cases.iter() {
-        assert_eq!(Tile::get_sibling(tile, 0), *expected);
+        assert_eq!(tile.get_sibling(0), *expected);
     }
 
     // Test RIGHT direction (1)
@@ -127,7 +127,7 @@ fn test_tile_sibling() {
     ];
 
     for (tile, expected) in right_cases.iter() {
-        assert_eq!(Tile::get_sibling(tile, 1), *expected);
+        assert_eq!(tile.get_sibling(1), *expected);
     }
 
     // Test LEFT direction (2)
@@ -137,7 +137,7 @@ fn test_tile_sibling() {
     ];
 
     for (tile, expected) in left_cases.iter() {
-        assert_eq!(Tile::get_sibling(tile, 2), *expected);
+        assert_eq!(tile.get_sibling(2), *expected);
     }
 
     // Test DOWN direction (3)
@@ -147,10 +147,10 @@ fn test_tile_sibling() {
     ];
 
     for (tile, expected) in down_cases.iter() {
-        assert_eq!(Tile::get_sibling(tile, 3), *expected);
+        assert_eq!(tile.get_sibling(3), *expected);
     }
 
     // Test invalid direction
-    assert_eq!(Tile::get_sibling(&Tile::new(1, 1, 2), 4), None);
-    assert_eq!(Tile::get_sibling(&Tile::new(1, 1, 2), 255), None);
+    assert_eq!(Tile::new(1, 1, 2).get_sibling(4), None);
+    assert_eq!(Tile::new(1, 1, 2).get_sibling(255), None);
 }

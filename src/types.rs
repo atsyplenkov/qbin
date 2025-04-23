@@ -50,11 +50,11 @@ impl Tile {
     /// // Create new tile
     /// let tile = Tile::new(8108, 14336, 14);
     /// // Estimate tile's area in m2
-    /// let area = Tile::area(&tile);
+    /// let area = Tile::area(tile);
     /// assert_relative_eq!(area, 210619.87609208928_f64, epsilon = 1e-10);
     /// ```
-    pub fn area(&self) -> f64 {
-        tile_area(&self)
+    pub fn area(self) -> f64 {
+        tile_area(self)
     }
 
     /// Return tile's latitude.
@@ -69,11 +69,11 @@ impl Tile {
     /// // Create new tile
     /// let tile = Tile::new(8108, 14336, 14);
     /// // Retrieve tile's latitude
-    /// let lat = Tile::to_latitude(&tile, 0.0);
+    /// let lat = tile.to_latitude(0.0);
     /// assert_relative_eq!(lat, -79.17133464081944_f64, epsilon = 1e-10);
     /// ```
-    pub fn to_latitude(&self, offset: f64) -> f64 {
-        tile_to_latitude(&self, offset)
+    pub fn to_latitude(self, offset: f64) -> f64 {
+        tile_to_latitude(self, offset)
     }
 
     /// Return tile's longitude.
@@ -88,23 +88,23 @@ impl Tile {
     /// // Create new tile
     /// let tile = Tile::new(8108, 14336, 14);
     /// // Retrieve tile's latitude
-    /// let lat = Tile::to_longitude(&tile, 0.0);
+    /// let lat = tile.to_longitude(0.0);
     /// assert_relative_eq!(lat, -1.845703125_f64, epsilon = 1e-10);
     /// ```
-    pub fn to_longitude(&self, offset: f64) -> f64 {
-        tile_to_longitude(&self, offset)
+    pub fn to_longitude(self, offset: f64) -> f64 {
+        tile_to_longitude(self, offset)
     }
 
     /// Get tile's siblings.
     // TODO:
     // Add examples. See how to properly document direction
-    pub fn get_sibling(&self, direction: u8) -> Option<Self> {
-        tile_sibling(&self, direction)
+    pub fn get_sibling(self, direction: u8) -> Option<Self> {
+        tile_sibling(self, direction)
     }
 
     /// Compute a hash from the tile.
-    pub fn to_hash(&self) -> u64 {
-        to_tile_hash(&self)
+    pub fn to_hash(self) -> u64 {
+        to_tile_hash(self)
     }
 
     /// Compute a tile from the hash.
@@ -188,8 +188,7 @@ impl Cell {
     ///
     /// ```
     pub fn area_m2(self) -> f64 {
-        let tile = self.to_tile();
-        Tile::area(&tile)
+        self.to_tile().area()
     }
 
     // TODO:
