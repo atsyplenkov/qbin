@@ -174,7 +174,7 @@ pub(crate) fn tile_sibling(tile: &Tile, direction: u8) -> Option<Tile> {
                 return None;
             }
         }
-        _ => return None,
+        _ => return None, // TODO: should I return Error?
     }
 
     Some(Tile::new(x, y, z))

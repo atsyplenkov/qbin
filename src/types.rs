@@ -93,6 +93,8 @@ impl Tile {
     }
 
     /// Get tile's siblings.
+    // TODO:
+    // Add examples. See how to properly document direction
     pub fn get_sibling(&self, direction: u8) -> Option<Self> {
         tile_sibling(&self, direction)
     }
