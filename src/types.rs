@@ -5,7 +5,7 @@ use core::num::NonZeroU64;
 /// A single tile coordinates
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub struct Tile {
-    pub x: u32,
+    pub x: u32, // TODO: replace with NonZeroU32?
     pub y: u32,
     pub z: u8,
 }
@@ -170,7 +170,7 @@ impl Cell {
     /// # Example
     /// ```
     /// let qb_cell = quadbin::Cell::new(5209574053332910079);
-    /// let parent = quadbin::Cell::parent(qb_cell, 2_u8);
+    /// let parent = qb_cell.parent(2_u8);
     /// assert_eq!(parent, quadbin::Cell::new(5200813144682790911))
     /// ```
     pub fn parent(self, parent_resolution: u8) -> Cell {
@@ -178,6 +178,8 @@ impl Cell {
     }
 
     /// Computes the area of this Quadbin cell, in m².
+    ///
+    /// See also [Cell::area_km2].
     ///
     /// # Example
     /// ```
@@ -191,12 +193,20 @@ impl Cell {
         self.to_tile().area()
     }
 
-    // TODO:
-    // Add area_km2
-
-    /// Convert a Quadbin cell into a tile.
-    pub fn to_tile(self) -> Tile {
-        cell_to_tile(self)
+    /// Computes the area of this Quadbin cell, in km².
+    ///
+    /// See also [Cell::area_m2].
+    ///
+    /// # Example
+    /// ```
+    /// use approx::assert_relative_eq;
+    ///
+    /// let area = quadbin::Cell::new(5234261499580514303_u64).area_km2();
+    /// assert_relative_eq!(area, 888.5463647859862, epsilon = 1e-6)
+    ///
+    /// ```
+    pub fn area_km2(self) -> f64 {
+        self.area_m2() / 1_000_000_f64
     }
 
     /// Convert a Quadbin cell into geographic point.
@@ -207,5 +217,10 @@ impl Cell {
     /// Convert a geographic point into a Quadbin cell.
     pub fn from_point(longitude: f64, latitude: f64, resolution: u8) -> Cell {
         point_to_cell(longitude, latitude, resolution)
+    }
+    
+    /// Convert a Quadbin cell into a tile.
+    pub fn to_tile(self) -> Tile {
+        cell_to_tile(self)
     }
 }
