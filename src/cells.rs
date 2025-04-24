@@ -49,7 +49,7 @@ pub(crate) fn tile_to_cell(tile: Tile) -> Cell {
 }
 
 /// Convert Quadbin cell into a tile
-pub(crate) fn cell_to_tile(cell: Cell) -> Tile {
+pub(crate) fn cell_to_tile(cell: &Cell) -> Tile {
     assert!(cell.is_valid(), "Quadbin cell index is not valid");
 
     let cell64 = cell.get();
@@ -93,7 +93,7 @@ pub(crate) fn point_to_cell(lat: f64, lng: f64, res: u8) -> Cell {
 }
 
 /// Convert cell into point
-pub(crate) fn cell_to_point(cell: Cell) -> (f64, f64) {
+pub(crate) fn cell_to_point(cell: &Cell) -> (f64, f64) {
     assert!(cell.is_valid(), "Quadbin cell index is not valid");
 
     let tile = cell.to_tile();
@@ -104,7 +104,7 @@ pub(crate) fn cell_to_point(cell: Cell) -> (f64, f64) {
 }
 
 /// Compute the parent cell for a specific resolution.
-pub(crate) fn cell_to_parent(cell: Cell, parent_res: u8) -> Cell {
+pub(crate) fn cell_to_parent(cell: &Cell, parent_res: u8) -> Cell {
     // Check resolution
     let resolution = cell.resolution();
     assert!(

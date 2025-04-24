@@ -37,7 +37,7 @@ impl Tile {
     ///
     /// See also [Tile::to_longitude].
     ///
-    pub fn to_latitude(self, offset: f64) -> f64 {
+    pub fn to_latitude(&self, offset: f64) -> f64 {
         tile_to_latitude(self, offset)
     }
 
@@ -45,19 +45,19 @@ impl Tile {
     ///
     /// See also [Tile::to_latitude].
     ///
-    pub fn to_longitude(self, offset: f64) -> f64 {
+    pub fn to_longitude(&self, offset: f64) -> f64 {
         tile_to_longitude(self, offset)
     }
 
     /// Get tile's siblings.
     // TODO:
     // Add examples. See how to properly document direction
-    pub fn get_sibling(self, direction: u8) -> Option<Self> {
+    pub fn get_sibling(&self, direction: u8) -> Option<Self> {
         tile_sibling(self, direction)
     }
 
     /// Compute a hash from the tile.
-    pub fn to_hash(self) -> u64 {
+    pub fn to_hash(&self) -> u64 {
         to_tile_hash(self)
     }
 
@@ -142,7 +142,7 @@ impl Cell {
     /// let parent = qb_cell.parent(2_u8);
     /// assert_eq!(parent, quadbin::Cell::new(5200813144682790911))
     /// ```
-    pub fn parent(self, parent_res: u8) -> Cell {
+    pub fn parent(&self, parent_res: u8) -> Cell {
         cell_to_parent(self, parent_res)
     }
 
@@ -182,7 +182,7 @@ impl Cell {
     ///
     /// Returns a tuple with latitude and longitude in degrees.
     ///
-    pub fn to_point(self) -> (f64, f64) {
+    pub fn to_point(&self) -> (f64, f64) {
         cell_to_point(self)
     }
 
@@ -199,7 +199,7 @@ impl Cell {
     }
 
     /// Convert a Quadbin cell into a tile.
-    pub(crate) fn to_tile(self) -> Tile {
+    pub(crate) fn to_tile(&self) -> Tile {
         cell_to_tile(self)
     }
 }

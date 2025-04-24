@@ -49,7 +49,7 @@ pub(crate) fn point_to_tile(lat: f64, lng: f64, res: u8) -> Tile {
 }
 
 /// Compute the latitude for a tile with an offset.
-pub(crate) fn tile_to_latitude(tile: Tile, offset: f64) -> f64 {
+pub(crate) fn tile_to_latitude(tile: &Tile, offset: f64) -> f64 {
     // Check if offset is between 0 and 1
     assert!(
         (0.0..=1.0).contains(&offset),
@@ -66,7 +66,7 @@ pub(crate) fn tile_to_latitude(tile: Tile, offset: f64) -> f64 {
 }
 
 /// Compute the longitude for a tile with an offset.
-pub(crate) fn tile_to_longitude(tile: Tile, offset: f64) -> f64 {
+pub(crate) fn tile_to_longitude(tile: &Tile, offset: f64) -> f64 {
     // Check if offset is between 0 and 1
     assert!(
         (0.0..=1.0).contains(&offset),
@@ -82,7 +82,7 @@ pub(crate) fn tile_to_longitude(tile: Tile, offset: f64) -> f64 {
 }
 
 /// Inverse of the scale factor at the tile center.
-pub(crate) fn tile_scalefactor(tile: Tile) -> f64 {
+pub(crate) fn tile_scalefactor(tile: &Tile) -> f64 {
     // Get Tile coords
     let y = tile.y as f64;
     let z2 = (1 << tile.z) as f64;
@@ -116,7 +116,7 @@ pub(crate) fn tile_area(tile: &Tile) -> f64 {
         let z_factor = |y_val: f64| -> f64 {
             // Create a new tile with the same x and z but different y
             let temp_tile = Tile::new(*x, y_val as u32, z as u8);
-            tile_scalefactor(temp_tile).powf(2.0)
+            tile_scalefactor(&temp_tile).powf(2.0)
         };
 
         area *= z_factor(y) / z_factor(center_y);
@@ -126,7 +126,7 @@ pub(crate) fn tile_area(tile: &Tile) -> f64 {
 }
 
 /// Compute the sibling (neighbour) tile in a specific direction.
-pub(crate) fn tile_sibling(tile: Tile, direction: u8) -> Option<Tile> {
+pub(crate) fn tile_sibling(tile: &Tile, direction: u8) -> Option<Tile> {
     // Early return for a low level == no neighbors
     // TODO: Think about what should one return instead of None
     if tile.z == 0_u8 {
@@ -180,7 +180,7 @@ pub(crate) fn tile_sibling(tile: Tile, direction: u8) -> Option<Tile> {
 }
 
 /// Compute a hash from the tile.
-pub(crate) fn to_tile_hash(tile: Tile) -> u64 {
+pub(crate) fn to_tile_hash(tile: &Tile) -> u64 {
     let x = tile.x as u64;
     let y = tile.y as u64;
     let z = tile.z as u64;

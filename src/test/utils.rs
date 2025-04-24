@@ -85,17 +85,17 @@ fn test_tile_conversion() {
 #[test]
 fn test_tile_scalefactor() {
     assert_relative_eq!(
-        tile_scalefactor(Tile::new(384, 368, 10)),
+        tile_scalefactor(&Tile::new(384, 368, 10)),
         0.7075410884638627_f64,
         epsilon = ACC
     );
     assert_relative_eq!(
-        tile_scalefactor(Tile::new(384, 368, 26)),
+        tile_scalefactor(&Tile::new(384, 368, 26)),
         0.08626970361752928_f64,
         epsilon = ACC
     );
     assert_relative_eq!(
-        tile_scalefactor(Tile::new(100, 100, 10)),
+        tile_scalefactor(&Tile::new(100, 100, 10)),
         0.15910754230624527_f64,
         epsilon = ACC
     );
