@@ -5,9 +5,9 @@ authors = ["Anatoly Tsyplenkov <atsyplenkov@fastmail.com>"]
 edition = "2024"
 license = "MIT"
 repository = "https://github.com/atsyplenkov/quadbin"
-description = "Encoding and decoding geographical coordinates to and from QuadBin, a tiling approach developed by Carto. An improved version of Microsoft's Bing Maps Tile System, aka Quadkey."
-keywords = ["quadbin", "spatial", "spatial-index", "quadkey"]
-categories = ["data-structures", "algorithms", "science::geo"]
+description = "Encoding and decoding geographical coordinates to and from QuadBin, a hierarchical geospatial indexing system for square cells in Web Mercator projection developed by Carto. An improved version of Microsoft's Bing Maps Tile System, aka Quadkey."
+keywords = ["quadbin", "quadkey", "spatial", "spatial-index"]
+categories = ["data-structures", "science::geo"]
 
 [dependencies]
 
