@@ -225,14 +225,21 @@ impl Cell {
     }
 
     /// Convert a Quadbin cell into geographic point.
-    /// 
+    ///
     /// Returns a tuple with latitude and longitude in degrees.
-    /// 
+    ///
     pub fn to_point(self) -> (f64, f64) {
         cell_to_point(self)
     }
 
     /// Convert a geographic point into a Quadbin cell.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// let cell = quadbin::Cell::from_point(-41.28303675124842, 174.77727344223067, 26);
+    /// assert_eq!(cell.get(), 5309133744805926483_u64)
+    /// ```
     pub fn from_point(lat: f64, lng: f64, res: u8) -> Cell {
         point_to_cell(lat, lng, res)
     }
