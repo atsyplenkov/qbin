@@ -3,8 +3,10 @@ use crate::utils::*;
 use core::num::NonZeroU64;
 
 /// A single tile coordinates
+///
+/// _Internal struct_
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub struct Tile {
+pub(crate) struct Tile {
     pub x: u32,
     pub y: u32,
     pub z: u8,
@@ -12,12 +14,6 @@ pub struct Tile {
 
 impl Tile {
     /// Create a new tile.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// let tile = quadbin::Tile::new(8108, 14336, 14);
-    /// ```
     pub fn new(x: u32, y: u32, z: u8) -> Tile {
         Tile { x, y, z }
     }
@@ -28,32 +24,12 @@ impl Tile {
     }
 
     /// Compute the tile for a longitude and latitude in a specific resolution.
-    ///
-    /// # Examples
-    /// ```
-    /// use quadbin::Tile;
-    /// // Create a tile from geographic coordinates:
-    /// let tile = Tile::from_point(95.0, -175.0, 2);
-    /// assert_eq!(tile, Tile::new(0, 0, 2));
-    /// ```
     pub fn from_point(lat: f64, lng: f64, res: u8) -> Self {
         point_to_tile(lat, lng, res)
     }
 
     /// Approximate tile area in square meters.
-    ///
-    /// # Examples
-    /// ```
-    /// use quadbin::Tile;
-    /// use approx::assert_relative_eq;
-    ///
-    /// // Create new tile
-    /// let tile = Tile::new(8108, 14336, 14);
-    /// // Estimate tile's area in m2
-    /// let area = Tile::area(tile);
-    /// assert_relative_eq!(area, 210619.87609208928_f64, epsilon = 1e-10);
-    /// ```
-    pub fn area(self) -> f64 {
+    pub fn area(&self) -> f64 {
         tile_area(self)
     }
 
@@ -61,17 +37,6 @@ impl Tile {
     ///
     /// See also [Tile::to_longitude].
     ///
-    /// # Examples
-    /// ```
-    /// use quadbin::Tile;
-    /// use approx::assert_relative_eq;
-    ///
-    /// // Create new tile
-    /// let tile = Tile::new(8108, 14336, 14);
-    /// // Retrieve tile's latitude
-    /// let lat = tile.to_latitude(0.0);
-    /// assert_relative_eq!(lat, -79.17133464081944_f64, epsilon = 1e-10);
-    /// ```
     pub fn to_latitude(self, offset: f64) -> f64 {
         tile_to_latitude(self, offset)
     }
@@ -80,17 +45,6 @@ impl Tile {
     ///
     /// See also [Tile::to_latitude].
     ///
-    /// # Examples
-    /// ```
-    /// use quadbin::Tile;
-    /// use approx::assert_relative_eq;
-    ///
-    /// // Create new tile
-    /// let tile = Tile::new(8108, 14336, 14);
-    /// // Retrieve tile's latitude
-    /// let lat = tile.to_longitude(0.0);
-    /// assert_relative_eq!(lat, -1.845703125_f64, epsilon = 1e-10);
-    /// ```
     pub fn to_longitude(self, offset: f64) -> f64 {
         tile_to_longitude(self, offset)
     }
@@ -164,7 +118,7 @@ impl Cell {
     /// let qb_cell = quadbin::Cell::new(5234261499580514303);
     /// assert_eq!(qb_cell.is_valid(), true)
     /// ```
-    pub fn is_valid(self) -> bool {
+    pub fn is_valid(&self) -> bool {
         is_valid_cell(self.get())
     }
 
@@ -176,7 +130,7 @@ impl Cell {
     /// let res = qb_cell.resolution();
     /// assert_eq!(res, 10)
     /// ```
-    pub fn resolution(self) -> u8 {
+    pub fn resolution(&self) -> u8 {
         ((self.0.get() >> 52) & 0x1F) as u8
     }
 
@@ -204,7 +158,7 @@ impl Cell {
     /// assert_relative_eq!(area, 888546364.7859862, epsilon = 1e-6)
     ///
     /// ```
-    pub fn area_m2(self) -> f64 {
+    pub fn area_m2(&self) -> f64 {
         self.to_tile().area()
     }
 
@@ -220,7 +174,7 @@ impl Cell {
     /// assert_relative_eq!(area, 888.5463647859862, epsilon = 1e-6)
     ///
     /// ```
-    pub fn area_km2(self) -> f64 {
+    pub fn area_km2(&self) -> f64 {
         self.area_m2() / 1_000_000_f64
     }
 
@@ -245,7 +199,7 @@ impl Cell {
     }
 
     /// Convert a Quadbin cell into a tile.
-    pub fn to_tile(self) -> Tile {
+    pub(crate) fn to_tile(self) -> Tile {
         cell_to_tile(self)
     }
 }

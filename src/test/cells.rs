@@ -91,7 +91,7 @@ fn test_cell_to_point() {
 #[test]
 fn test_get_cell_resolution() {
     let qb_cell = Cell::new(5209574053332910079_u64);
-    assert_eq!(Cell::resolution(qb_cell), 4_u8)
+    assert_eq!(qb_cell.resolution(), 4_u8)
 }
 
 // Get parent cell

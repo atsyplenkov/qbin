@@ -93,9 +93,9 @@ pub(crate) fn tile_scalefactor(tile: Tile) -> f64 {
 }
 
 /// Approximate area of a tile in square meters.
-pub(crate) fn tile_area(tile: Tile) -> f64 {
+pub(crate) fn tile_area(tile: &Tile) -> f64 {
     // Get Tile coords
-    let x = tile.x;
+    let x = &tile.x;
     let y = tile.y as f64;
     let z = tile.z as usize;
 
@@ -115,7 +115,7 @@ pub(crate) fn tile_area(tile: Tile) -> f64 {
     if y < center_y - 1.0 || y > center_y {
         let z_factor = |y_val: f64| -> f64 {
             // Create a new tile with the same x and z but different y
-            let temp_tile = Tile::new(x, y_val as u32, z as u8);
+            let temp_tile = Tile::new(*x, y_val as u32, z as u8);
             tile_scalefactor(temp_tile).powf(2.0)
         };
 
