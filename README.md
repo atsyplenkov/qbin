@@ -39,11 +39,10 @@ In contrast, **Quadbin** (in its current implementation) uses a fixed-length 64-
 
 ```text
  ┏━┳━━━┳━━━━┳━━━━━━━┳━━━━━━━━━━━┈┈┈┈┈┈┈┈━━━━━━━━┓
- ┃U┃ H ┃ M  ┃   R   ┃           Morton          ┃
+ ┃U┃ H ┃ M  ┃   R   ┃    XY in Morton order     ┃
  ┗━┻━━━┻━━━━┻━━━━━━━┻━━━━━━━━━━━┈┈┈┈┈┈┈┈━━━━━━━━┛
-64 63   59   52     51                          0
+ 63  62   59    56    52                        0
 ```
-
 - `U`: Unused reserved bit (bit 63), always set to `0`;
 - `H`: Header bit (bit 62), always set to `1`;
 - `M`: Index mode, fixed to `1`, encoded over 4 bits (bits 59–62); 
@@ -52,7 +51,7 @@ In contrast, **Quadbin** (in its current implementation) uses a fixed-length 64-
 
 This structure makes Quadbin a more memory-efficient way to store tile indices, which is important when working with large spatial datasets or arrays.
 
-For example, Australia and New Zealand are located in the third tile at Level 1, and in the second tile at Level 2. Their corresponding Quadkey would be `31` (since tile numbering starts at 0). However, in the Quadbin tiling system, the same location is represented by the index: `5201094619659501567`.
+For example, Australia and New Zealand are located in the third tile at Level 1, and in the second tile at Level 2. Their corresponding Quadkey would be `31` (since tile numbering starts at 0). However, in the Quadbin spatial indexing, the same location is represented by the Quadbin cell `5201094619659501567`. Another example: at the highest resolution possible, the best beer in Wellington can be found in the Quadbin index `5309133744805926483` (level 26) or Quadkey `31311100030030030211121` (level 23).
 
 ## Reasoning
 This repository is a proof-of-concept project, where I practised writing Rust code, and, moreover, writing Rust with R and Python bindings as a single project. Recently, I was excited by the newly proposed  [`raquet`](https://github.com/CartoDB/raquet) format by [CARTO](https://github.com/CartoDB) for storing raster data in Parquet files and was eager to try it in my projects. However, the `raquet` file specification and conversion are written in pure Python and heavily relies on `gdal`; therefore, instead of implementing R-to-Python, I decided to rewrite everything in Rust, merely for fun and practice. This repository is the first step towards native, GDAL-free raster to `raquet` conversion.
