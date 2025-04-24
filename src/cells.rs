@@ -83,11 +83,11 @@ pub(crate) fn cell_to_tile(cell: Cell) -> Tile {
 }
 
 /// Convert a geographic point into a cell.
-pub(crate) fn point_to_cell(lng: f64, lat: f64, res: u8) -> Cell {
+pub(crate) fn point_to_cell(lat: f64, lng: f64, res: u8) -> Cell {
     let lng = clip_longitude(lng);
     let lat = clip_latitude(lat);
 
-    let tile = Tile::from_point(lng, lat, res);
+    let tile = Tile::from_point(lat, lng, res);
 
     tile.to_cell()
 }
@@ -100,7 +100,7 @@ pub(crate) fn cell_to_point(cell: Cell) -> (f64, f64) {
     let lat = tile.to_latitude(0.5);
     let lon = tile.to_longitude(0.5);
 
-    (lon, lat)
+    (lat, lon)
 }
 
 /// Compute the parent cell for a specific resolution.

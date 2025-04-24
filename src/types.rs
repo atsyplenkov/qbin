@@ -33,11 +33,11 @@ impl Tile {
     /// ```
     /// use quadbin::Tile;
     /// // Create a tile from geographic coordinates:
-    /// let tile = Tile::from_point(-175.0, 95.0, 2);
+    /// let tile = Tile::from_point(95.0, -175.0, 2);
     /// assert_eq!(tile, Tile::new(0, 0, 2));
     /// ```
-    pub fn from_point(lng: f64, lat: f64, res: u8) -> Self {
-        point_to_tile(lng, lat, res)
+    pub fn from_point(lat: f64, lng: f64, res: u8) -> Self {
+        point_to_tile(lat, lng, res)
     }
 
     /// Approximate tile area in square meters.
@@ -225,13 +225,16 @@ impl Cell {
     }
 
     /// Convert a Quadbin cell into geographic point.
+    /// 
+    /// Returns a tuple with latitude and longitude in degrees.
+    /// 
     pub fn to_point(self) -> (f64, f64) {
         cell_to_point(self)
     }
 
     /// Convert a geographic point into a Quadbin cell.
-    pub fn from_point(lng: f64, lat: f64, res: u8) -> Cell {
-        point_to_cell(lng, lat, res)
+    pub fn from_point(lat: f64, lng: f64, res: u8) -> Cell {
+        point_to_cell(lat, lng, res)
     }
 
     /// Convert a Quadbin cell into a tile.

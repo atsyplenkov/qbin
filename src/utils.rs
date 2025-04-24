@@ -19,11 +19,7 @@ pub(crate) fn clip_latitude(lat: f64) -> f64 {
 
 /// Compute the tile in fractions for a longitude and latitude in a
 /// specific resolution.
-pub(crate) fn point_to_tile_fraction(
-    lng: f64,
-    lat: f64,
-    res: u8,
-) -> (f64, f64, u8) {
+pub(crate) fn point_to_tile_fraction(lat: f64, lng: f64, res: u8) -> (f64, f64, u8) {
     // Check resolution to avoid overflow
     assert!(
         (res <= MAX_RESOLUTION),
@@ -45,8 +41,8 @@ pub(crate) fn point_to_tile_fraction(
 }
 
 /// Compute the tile for a longitude and latitude in a specific resolution.
-pub(crate) fn point_to_tile(lng: f64, lat: f64, res: u8) -> Tile {
-    let (x, y, z) = point_to_tile_fraction(lng, lat, res);
+pub(crate) fn point_to_tile(lat: f64, lng: f64, res: u8) -> Tile {
+    let (x, y, z) = point_to_tile_fraction(lat, lng, res);
     let x: u32 = x.floor() as u32;
     let y: u32 = y.floor() as u32;
     Tile::new(x, y, z)
@@ -211,6 +207,6 @@ pub(crate) fn from_tile_hash(tile_hash: u64) -> Tile {
 /// Return the tiles hashes that cover a point.
 ///
 /// _For internal use._
-pub fn point_cover(lng: f64, lat: f64, res: u8) -> u64 {
-    Tile::from_point(lng, lat, res).to_hash()
+pub fn point_cover(lat: f64, lng: f64, res: u8) -> u64 {
+    Tile::from_point(lat, lng, res).to_hash()
 }
