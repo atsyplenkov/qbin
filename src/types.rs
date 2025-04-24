@@ -36,8 +36,8 @@ impl Tile {
     /// let tile = Tile::from_point(-175.0, 95.0, 2);
     /// assert_eq!(tile, Tile::new(0, 0, 2));
     /// ```
-    pub fn from_point(longitude: f64, latitude: f64, resolution: u8) -> Self {
-        point_to_tile(longitude, latitude, resolution)
+    pub fn from_point(lng: f64, lat: f64, res: u8) -> Self {
+        point_to_tile(lng, lat, res)
     }
 
     /// Approximate tile area in square meters.
@@ -188,8 +188,8 @@ impl Cell {
     /// let parent = qb_cell.parent(2_u8);
     /// assert_eq!(parent, quadbin::Cell::new(5200813144682790911))
     /// ```
-    pub fn parent(self, parent_resolution: u8) -> Cell {
-        cell_to_parent(self, parent_resolution)
+    pub fn parent(self, parent_res: u8) -> Cell {
+        cell_to_parent(self, parent_res)
     }
 
     /// Computes the area of this Quadbin cell, in m².
@@ -230,8 +230,8 @@ impl Cell {
     }
 
     /// Convert a geographic point into a Quadbin cell.
-    pub fn from_point(longitude: f64, latitude: f64, resolution: u8) -> Cell {
-        point_to_cell(longitude, latitude, resolution)
+    pub fn from_point(lng: f64, lat: f64, res: u8) -> Cell {
+        point_to_cell(lng, lat, res)
     }
 
     /// Convert a Quadbin cell into a tile.

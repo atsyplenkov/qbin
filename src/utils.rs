@@ -8,32 +8,32 @@ pub(crate) fn clip_number(num: f64, lower: f64, upper: f64) -> f64 {
 }
 
 /// Limit longitude bounds.
-pub(crate) fn clip_longitude(longitude: f64) -> f64 {
-    clip_number(longitude, MIN_LONGITUDE, MAX_LONGITUDE)
+pub(crate) fn clip_longitude(lng: f64) -> f64 {
+    clip_number(lng, MIN_LONGITUDE, MAX_LONGITUDE)
 }
 
 /// Limit latitude bounds.
-pub(crate) fn clip_latitude(latitude: f64) -> f64 {
-    clip_number(latitude, MIN_LATITUDE, MAX_LATITUDE)
+pub(crate) fn clip_latitude(lat: f64) -> f64 {
+    clip_number(lat, MIN_LATITUDE, MAX_LATITUDE)
 }
 
 /// Compute the tile in fractions for a longitude and latitude in a
 /// specific resolution.
 pub(crate) fn point_to_tile_fraction(
-    longitude: f64,
-    latitude: f64,
-    resolution: u8,
+    lng: f64,
+    lat: f64,
+    res: u8,
 ) -> (f64, f64, u8) {
     // Check resolution to avoid overflow
     assert!(
-        (resolution <= MAX_RESOLUTION),
+        (res <= MAX_RESOLUTION),
         "Resolution should be between 0 and 26"
     );
 
     // Compute tile coordinates
-    let z2: f64 = (1 << resolution) as f64;
-    let sinlat = f64::sin(latitude * PI / 180.0);
-    let x = z2 * (longitude / 360.0 + 0.5);
+    let z2: f64 = (1 << res) as f64;
+    let sinlat = f64::sin(lat * PI / 180.0);
+    let x = z2 * (lng / 360.0 + 0.5);
     let yfraction = 0.5 - 0.25 * ((1.0 + sinlat) / (1.0 - sinlat)).ln() / PI;
     let y = clip_number(z2 * yfraction, 0.0, z2 - 1.0);
 
@@ -41,12 +41,12 @@ pub(crate) fn point_to_tile_fraction(
     let x = if x < 0.0 { x + z2 } else { x };
 
     // Return the tile coordinates
-    (x, y, resolution)
+    (x, y, res)
 }
 
 /// Compute the tile for a longitude and latitude in a specific resolution.
-pub(crate) fn point_to_tile(longitude: f64, latitude: f64, resolution: u8) -> Tile {
-    let (x, y, z) = point_to_tile_fraction(longitude, latitude, resolution);
+pub(crate) fn point_to_tile(lng: f64, lat: f64, res: u8) -> Tile {
+    let (x, y, z) = point_to_tile_fraction(lng, lat, res);
     let x: u32 = x.floor() as u32;
     let y: u32 = y.floor() as u32;
     Tile::new(x, y, z)
@@ -211,6 +211,6 @@ pub(crate) fn from_tile_hash(tile_hash: u64) -> Tile {
 /// Return the tiles hashes that cover a point.
 ///
 /// _For internal use._
-pub fn point_cover(longitude: f64, latitude: f64, resolution: u8) -> u64 {
-    Tile::from_point(longitude, latitude, resolution).to_hash()
+pub fn point_cover(lng: f64, lat: f64, res: u8) -> u64 {
+    Tile::from_point(lng, lat, res).to_hash()
 }
