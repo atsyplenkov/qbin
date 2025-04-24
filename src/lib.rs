@@ -5,7 +5,7 @@ mod constants;
 pub mod utils;
 
 mod types;
-pub use crate::types::{Cell, Tile};
+pub use crate::types::Cell;
 
 #[cfg(test)]
 mod test;

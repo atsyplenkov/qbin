@@ -16,7 +16,7 @@ fn test_tile_hashing() {
 
     for (tile, hash) in cases.iter() {
         // Tile to hash
-        assert_eq!(Tile::to_hash(*tile), *hash);
+        assert_eq!(Tile::to_hash(&tile), *hash);
         // Hash to tile
         assert_eq!(Tile::from_hash(*hash), *tile);
     }
@@ -31,6 +31,6 @@ fn test_point_hashing() {
     ];
 
     for (coords, res, hash) in cases.iter() {
-        assert_eq!(point_cover(coords.0, coords.1, *res), *hash);
+        assert_eq!(point_cover(coords.1, coords.0, *res), *hash);
     }
 }

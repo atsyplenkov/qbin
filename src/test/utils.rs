@@ -9,7 +9,7 @@ const ACC: f64 = 1e-10;
 // See https://github.com/CartoDB/quadbin-py/blob/master/tests/unit/test_utils.py
 #[test]
 fn test_point_to_tile_fraction() {
-    let tile = point_to_tile_fraction(-95.93965530395508_f64, 41.26000108568697_f64, 9_u8);
+    let tile = point_to_tile_fraction(41.26000108568697_f64, -95.93965530395508_f64, 9_u8);
     assert_relative_eq!(tile.0, 119.552490234375_f64, epsilon = ACC);
     assert_relative_eq!(tile.1, 191.47119140625_f64, epsilon = ACC);
     assert_eq!(tile.2, 9_u8);
@@ -18,15 +18,15 @@ fn test_point_to_tile_fraction() {
 #[test]
 fn test_point_to_tile() {
     // X axis
-    assert_eq!(Tile::from_point(-180.0, 0.0, 0), Tile::new(0, 0, 0));
-    assert_eq!(Tile::from_point(-180.0, 85.0, 2), Tile::new(0, 0, 2));
-    assert_eq!(Tile::from_point(180.0, 85.0, 2), Tile::new(0, 0, 2));
-    assert_eq!(Tile::from_point(-185.0, 85.0, 2), Tile::new(3, 0, 2));
-    assert_eq!(Tile::from_point(185.0, 85.0, 2), Tile::new(0, 0, 2));
+    assert_eq!(Tile::from_point(0.0, -180.0, 0), Tile::new(0, 0, 0));
+    assert_eq!(Tile::from_point(85.0, -180.0, 2), Tile::new(0, 0, 2));
+    assert_eq!(Tile::from_point(85.0, 180.0, 2), Tile::new(0, 0, 2));
+    assert_eq!(Tile::from_point(85.0, -185.0, 2), Tile::new(3, 0, 2));
+    assert_eq!(Tile::from_point(85.0, 185.0, 2), Tile::new(0, 0, 2));
 
     // Y-axis
-    assert_eq!(Tile::from_point(-175.0, -95.0, 2), Tile::new(0, 3, 2));
-    assert_eq!(Tile::from_point(-175.0, 95.0, 2), Tile::new(0, 0, 2));
+    assert_eq!(Tile::from_point(-95.0, -175.0, 2), Tile::new(0, 3, 2));
+    assert_eq!(Tile::from_point(95.0, -175.0, 2), Tile::new(0, 0, 2));
 }
 
 // Estimate tile's area
@@ -60,7 +60,7 @@ fn test_tile_conversion() {
 
     let lon = -45.0_f64;
     let lat = 45.0_f64;
-    let tile = Tile::from_point(lon, lat, 10);
+    let tile = Tile::from_point(lat, lon, 10);
 
     // Check Tile conversion
     assert_eq!(tile.x, 384_u32);
@@ -85,17 +85,17 @@ fn test_tile_conversion() {
 #[test]
 fn test_tile_scalefactor() {
     assert_relative_eq!(
-        tile_scalefactor(Tile::new(384, 368, 10)),
+        tile_scalefactor(&Tile::new(384, 368, 10)),
         0.7075410884638627_f64,
         epsilon = ACC
     );
     assert_relative_eq!(
-        tile_scalefactor(Tile::new(384, 368, 26)),
+        tile_scalefactor(&Tile::new(384, 368, 26)),
         0.08626970361752928_f64,
         epsilon = ACC
     );
     assert_relative_eq!(
-        tile_scalefactor(Tile::new(100, 100, 10)),
+        tile_scalefactor(&Tile::new(100, 100, 10)),
         0.15910754230624527_f64,
         epsilon = ACC
     );

@@ -20,12 +20,12 @@ use approx::assert_relative_eq;
 let longitude = -3.7038;
 let latitude = 40.4168;
 let resolution = 10_u8;
-let qb = Cell::from_point(longitude, latitude, resolution);
+let qb = Cell::from_point(latitude, longitude, resolution);
 assert_eq!(qb, Cell::new(5234261499580514303_u64));
 
 // Get a point from a Quadbin cell
 let coords = Cell::new(5209574053332910079_u64).to_point();
-assert_eq!(coords, (33.75, -11.178401873711776));
+assert_eq!(coords, (-11.178401873711776, 33.75));
 
 // Quadbin resolution at equator in m²
 let area = Cell::from_point(0.0, 0.0, 26).area_m2();
