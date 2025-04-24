@@ -183,7 +183,29 @@ impl Cell {
     /// Returns a tuple with latitude and longitude in degrees.
     ///
     pub fn to_point(&self) -> (f64, f64) {
+        // TODO: return an array
         cell_to_point(self)
+    }
+
+    /// Convert a Quadbin cell into a bounding box.
+    ///
+    /// Returns an array with [xmin, ymin, xmax, ymax]
+    /// in degrees.
+    ///
+    /// # Example
+    /// ```
+    /// let bbox = quadbin::Cell::new(5209574053332910079).to_bbox();
+    /// assert_eq!( bbox, [22.5, -21.943045533438166, 45.0, 0.0])
+    /// ```
+    pub fn to_bbox(&self) -> [f64; 4] {
+        let tile = self.to_tile();
+
+        let xmin = tile.to_longitude(0.0);
+        let xmax = tile.to_longitude(1.0);
+        let ymin = tile.to_latitude(1.0);
+        let ymax = tile.to_latitude(0.0);
+
+        [xmin, ymin, xmax, ymax]
     }
 
     /// Convert a geographic point into a Quadbin cell.

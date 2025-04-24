@@ -74,6 +74,30 @@ fn test_point_to_cell() {
     }
 }
 
+// Convert quadbin cell to bounding box
+#[test]
+fn test_cell_to_bbox() {
+    // Conversion works
+    assert_eq!(
+        Cell::new(5209574053332910079).to_bbox(),
+        [22.5, -21.943045533438166, 45.0, 0.0]
+    );
+
+    // Coords are located in correct order
+    let cases: [u64; 4] = [
+        5211632339100106751,
+        5212472365983727615,
+        5226055182877458431,
+        5264708239044902911,
+    ];
+
+    for i in cases.iter() {
+        let bbox = Cell::new(*i).to_bbox();
+        assert_eq!(bbox[0] < bbox[2], true);
+        assert_eq!(bbox[1] < bbox[3], true);
+    }
+}
+
 // Convert quadbin cell back to coords
 #[test]
 fn test_cell_to_point() {
