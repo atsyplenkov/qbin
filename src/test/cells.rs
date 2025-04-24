@@ -1,4 +1,3 @@
-use crate::cells::*;
 use crate::types::*;
 use approx::assert_relative_eq;
 
@@ -10,13 +9,19 @@ fn test_is_cell_valid() {
         (5192650370358181887_u64, true),
         (5202361257054699519_u64, true),
         (5291729562728627583_u64, true),
-        (5209574053332910078_u64, false),
-        (6362495557939757055_u64, false),
     ];
 
     for (cell, expected) in cases.iter() {
-        assert_eq!(is_valid_cell(Cell::new(*cell)), *expected);
+        assert_eq!(Cell::new(*cell).is_valid(), *expected);
     }
+}
+
+// Expect panic due to invalid cell index
+#[test]
+#[should_panic(expected = "Provided Quadbin Cell index is invalid")]
+fn test_new_invalid_cell() {
+    let _ = Cell::new(5209574053332910078_u64);
+    let _ = Cell::new(6362495557939757055_u64);
 }
 
 // Validation test from original CARTO's `quadbin-js`

@@ -5,7 +5,7 @@ use core::num::NonZeroU64;
 /// A single tile coordinates
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub struct Tile {
-    pub x: u32, // TODO: replace with NonZeroU32?
+    pub x: u32,
     pub y: u32,
     pub z: u8,
 }
@@ -128,11 +128,11 @@ impl Tile {
 /// ```
 ///
 /// Where:
-/// - `U` are unused reserved bit, always set to 0 (bit 63).
-/// - `H` is the header bit (bit 62, always 1).
-/// - `M` is the index mode, always set to 1, coded on 4 bits (59-62).
-/// - `R` is the cell resolution, in [0; 26], coded on bits 52-56.
-/// - Remaining bits encode the cell's XY position in Morton order (0-51).
+/// - `U`: Unused reserved bit (bit 63), always set to `0`;
+/// - `H`: Header bit (bit 62), always set to `1`;
+/// - `M`: Index mode, fixed to `1`, encoded over 4 bits (bits 59–62);
+/// - `R`: Cell resolution, ranging from `0` to `26`, encoded in bits 52–56;
+/// - Remaining bits (0–51) encode the cell’s XY position in Morton order (Z-order curve).
 ///
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub struct Cell(NonZeroU64);
@@ -143,14 +143,29 @@ impl Cell {
         self.0.get()
     }
 
-    /// Create new cell index
+    /// Create new Quadbin cell from index.
     ///
     /// # Example
     /// ```
     /// let qb_cell = quadbin::Cell::new(5234261499580514303);
     /// ```
     pub fn new(value: u64) -> Cell {
+        assert!(
+            is_valid_cell(value),
+            "Provided Quadbin Cell index is invalid"
+        );
         Cell(NonZeroU64::new(value).expect("non-zero cell index"))
+    }
+
+    /// Quadbin cell index validation.
+    ///
+    /// # Example
+    /// ```
+    /// let qb_cell = quadbin::Cell::new(5234261499580514303);
+    /// assert_eq!(qb_cell.is_valid(), true)
+    /// ```
+    pub fn is_valid(self) -> bool {
+        is_valid_cell(self.get())
     }
 
     /// Returns the resolution of the cell index.

@@ -3,8 +3,7 @@ use crate::types::*;
 use crate::utils::*;
 
 /// Quadbin cell validation
-pub fn is_valid_cell(cell: Cell) -> bool {
-    let cell64 = cell.get();
+pub(crate) fn is_valid_cell(cell64: u64) -> bool {
     let header = HEADER;
     let mode = (cell64 >> 59) & 7;
     let resolution = (cell64 >> 52) & 0x1F;
@@ -51,7 +50,7 @@ pub(crate) fn tile_to_cell(tile: Tile) -> Cell {
 
 /// Convert Quadbin cell into a tile
 pub(crate) fn cell_to_tile(cell: Cell) -> Tile {
-    assert!(is_valid_cell(cell), "Quadbin cell index is not valid");
+    assert!(cell.is_valid(), "Quadbin cell index is not valid");
 
     let cell64 = cell.get();
     let z = (cell64 >> 52) & 31;
@@ -95,7 +94,7 @@ pub(crate) fn point_to_cell(longitude: f64, latitude: f64, resolution: u8) -> Ce
 
 /// Convert cell into point
 pub(crate) fn cell_to_point(cell: Cell) -> (f64, f64) {
-    assert!(is_valid_cell(cell), "Quadbin cell index is not valid");
+    assert!(cell.is_valid(), "Quadbin cell index is not valid");
 
     let tile = cell.to_tile();
     let lat = tile.to_latitude(0.5);
