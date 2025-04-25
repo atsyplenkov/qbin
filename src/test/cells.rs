@@ -1,5 +1,12 @@
+use crate::direction::Direction;
 use crate::types::*;
 use approx::assert_relative_eq;
+
+// Constants to save some typing
+const UP: Direction = Direction::Up;
+const DOWN: Direction = Direction::Down;
+const RIGHT: Direction = Direction::Right;
+const LEFT: Direction = Direction::Left;
 
 // Test validiy of Quadbin cell indexes
 #[test]
@@ -142,4 +149,51 @@ fn test_cell_to_parent_invalid_resolution() {
 fn test_cell_area() {
     let area = Cell::new(5209574053332910079_u64).area_m2();
     assert_relative_eq!(area, 6023040823252.6641, epsilon = 1e-2);
+}
+
+// Find cell's neighbors
+// Identical to
+// https://github.com/CartoDB/quadbin-py/blob/39a0adbb238ff214fbbca7b73200cfebf2aef38c/tests/unit/test_main.py#L203
+#[test]
+fn test_cell_neighbor() {
+    assert_eq!(Cell::new(5192650370358181887).neighbor(UP), None);
+    assert_eq!(Cell::new(5193776270265024511).neighbor(UP), None);
+    assert_eq!(Cell::new(5194902170171867135).neighbor(UP), None);
+    assert_eq!(Cell::new(5194902170171867135).neighbor(RIGHT), None);
+
+    // Resolution 1
+    assert_eq!(
+        Cell::new(5193776270265024511).neighbor(DOWN),
+        Some(Cell::new(5196028070078709759))
+    );
+    assert_eq!(
+        Cell::new(5193776270265024511).neighbor(RIGHT),
+        Some(Cell::new(5194902170171867135))
+    );
+    assert_eq!(
+        Cell::new(5194902170171867135).neighbor(DOWN),
+        Some(Cell::new(5197153969985552383))
+    );
+    assert_eq!(
+        Cell::new(5194902170171867135).neighbor(LEFT),
+        Some(Cell::new(5193776270265024511))
+    );
+    assert_eq!(
+        Cell::new(5209574053332910079).neighbor(UP),
+        Some(Cell::new(5208061125333090303))
+    );
+
+    // Resolution 4
+    assert_eq!(
+        Cell::new(5209574053332910079).neighbor(DOWN),
+        Some(Cell::new(5209609237704998911))
+    );
+    assert_eq!(
+        Cell::new(5209574053332910079).neighbor(LEFT),
+        Some(Cell::new(5209556461146865663))
+    );
+    assert_eq!(
+        Cell::new(5209574053332910079).neighbor(RIGHT),
+        Some(Cell::new(5209626829891043327))
+    );
 }

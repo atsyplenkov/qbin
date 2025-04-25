@@ -1,4 +1,5 @@
 use crate::constants::*;
+use crate::direction::Direction;
 use crate::types::Tile;
 use std::f64::consts::PI;
 
@@ -126,7 +127,7 @@ pub(crate) fn tile_area(tile: &Tile) -> f64 {
 }
 
 /// Compute the neighbour (sibling) tile in a specific direction.
-pub(crate) fn tile_neighbor(tile: &Tile, direction: u8) -> Option<Tile> {
+pub(crate) fn tile_neighbor(tile: &Tile, direction: Direction) -> Option<Tile> {
     // Early return for a low level == no neighbors
     // TODO: Think about what should one return instead of None
     if tile.z == 0_u8 {
@@ -141,39 +142,34 @@ pub(crate) fn tile_neighbor(tile: &Tile, direction: u8) -> Option<Tile> {
     let tiles_per_level = 1u32 << z;
 
     match direction {
-        0 => {
-            // UP
+        Direction::Up => {
             if y > 0 {
                 y -= 1;
             } else {
                 return None;
             }
         }
-        1 => {
-            // RIGHT
+        Direction::Right => {
             if x < tiles_per_level - 1 {
                 x += 1;
             } else {
                 return None;
             }
         }
-        2 => {
-            // LEFT
+        Direction::Left => {
             if x > 0 {
                 x -= 1;
             } else {
                 return None;
             }
         }
-        3 => {
-            // DOWN
+        Direction::Down => {
             if y < tiles_per_level - 1 {
                 y += 1;
             } else {
                 return None;
             }
         }
-        _ => return None, // TODO: should I return Error?
     }
 
     Some(Tile::new(x, y, z))

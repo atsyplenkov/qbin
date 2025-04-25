@@ -1,3 +1,4 @@
+use crate::Direction;
 use crate::cells::*;
 use crate::utils::*;
 use core::num::NonZeroU64;
@@ -50,9 +51,7 @@ impl Tile {
     }
 
     /// Get tile's siblings.
-    // TODO:
-    // Add examples. See how to properly document direction
-    pub fn neighbor(&self, direction: u8) -> Option<Self> {
+    pub fn neighbor(&self, direction: Direction) -> Option<Self> {
         tile_neighbor(self, direction)
     }
 
@@ -144,6 +143,24 @@ impl Cell {
     /// ```
     pub fn parent(&self, parent_res: u8) -> Cell {
         cell_to_parent(self, parent_res)
+    }
+
+    /// Find cell's neighbor for a specific [Direction].
+    ///
+    /// In original JavaScript implementation this operation is called
+    /// sibling. However, for the Rust naming convention, we decided to
+    /// name sibling's as neighbors.
+    ///
+    /// # Example
+    /// ```
+    /// use quadbin::{Cell, Direction};
+    /// 
+    /// let sibling = Cell::new(5209574053332910079).neighbor(Direction::Right);
+    /// assert_eq!(sibling, Some(Cell::new(5209626829891043327)));
+    /// ```
+    pub fn neighbor(&self, direction: Direction) -> Option<Self> {
+        let tile = self.to_tile().neighbor(direction);
+        tile.map(Tile::to_cell)
     }
 
     /// Computes the area of this Quadbin cell, in m².
