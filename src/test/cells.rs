@@ -36,8 +36,6 @@ fn test_new_invalid_cell() {
 #[test]
 fn test_tile_and_cell_conversion() {
     // Test real examples
-    // TODO:
-    // Add more cases
     let cases = [
         (9_u32, 8_u32, 4_u8, 5209574053332910079_u64),
         (0_u32, 0_u32, 0_u8, 5192650370358181887_u64),

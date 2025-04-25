@@ -170,7 +170,6 @@ impl Cell {
     /// ```
     ///
     pub fn to_point(&self) -> [f64; 2] {
-        // TODO: return an array
         cell_to_point(self)
     }
 
