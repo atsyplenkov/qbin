@@ -225,3 +225,6 @@ impl Cell {
         cell_to_tile(self)
     }
 }
+
+// TODO:
+// Detect direction from neighbor https://github.com/HydroniumLabs/h3o/blob/ad2bebf52eab218d66b0bf213b14a2802bf616f7/src/base_cell.rs#L135C1-L150C6
