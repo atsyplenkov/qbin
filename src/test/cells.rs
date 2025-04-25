@@ -197,3 +197,30 @@ fn test_cell_neighbor() {
         Some(Cell::new(5209626829891043327))
     );
 }
+
+// List all Cell's neighbors
+#[test]
+fn test_cell_neighbors() {
+    let center_cells = [
+        Cell::new(5209574053332910079),
+        Cell::new(5194902170171867135),
+        Cell::new(5192650370358181887),
+        Cell::new(5201094619659501567),
+    ];
+
+    for i in center_cells.iter() {
+        assert_eq!(
+            i.neighbors(),
+            [
+                i.neighbor(UP),
+                i.neighbor(RIGHT),
+                i.neighbor(LEFT),
+                i.neighbor(DOWN)
+            ]
+        )
+    }
+
+    // Test that None is returned alongside with Some(Cell)
+    let nn = Cell::new(5201094619659501567).neighbors();
+    assert_eq!(nn[1], None)
+}

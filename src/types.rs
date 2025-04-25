@@ -1,7 +1,7 @@
 use crate::Direction;
 use crate::cells::*;
 use crate::utils::*;
-use core::num::NonZeroU64;
+use core::{fmt, num::NonZeroU64};
 
 /// Represents a cell in the Quadbin grid system at a
 /// particular resolution.
@@ -80,6 +80,9 @@ impl Cell {
         cell_to_parent(self, parent_res)
     }
 
+    // TODO:
+    // Add child and/or children
+
     /// Find the Cell's neighbor in a specific [Direction].
     ///
     /// In the original JavaScript implementation, this operation is called
@@ -107,6 +110,20 @@ impl Cell {
         let tile = self.to_tile().neighbor(direction);
         tile.map(Tile::to_cell)
     }
+
+    /// List all Cell's neighbors.
+    pub fn neighbors(&self) -> [Option<Cell>; 4] {
+        let mut neighbors = [None; 4];
+
+        for (i, neighbor) in neighbors.iter_mut().enumerate() {
+            *neighbor = self.neighbor(Direction::new_unchecked(i as u8));
+        }
+
+        neighbors
+    }
+
+    // TODO:
+    // Add `direction_to_neighbor` -- return Direction to neighbor
 
     /// Computes the area of this Quadbin cell, in m².
     ///
@@ -193,6 +210,12 @@ impl Cell {
     /// Convert a Quadbin cell into a tile.
     pub(crate) fn to_tile(self) -> Tile {
         cell_to_tile(&self)
+    }
+}
+
+impl fmt::Display for Cell {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.get())
     }
 }
 
