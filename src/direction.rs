@@ -9,8 +9,15 @@ const MAX: u8 = 4;
 /// In Quadbin, each cell at level `N-1` is divided into 4 cells at the
 /// level `N`, with each sub-cell in one of the 4 possible directions (4 axes).
 ///
-// TODO:
-// Add schema of direction as in h3o
+/// ```text
+///       +-----+
+///       | Up  |
+/// +-----+-----+-----+
+/// |Left |Cell |Right|
+/// +-----+-----+-----+
+///       |Down |
+///       +-----+
+/// ```
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
 #[repr(u8)]
 pub enum Direction {

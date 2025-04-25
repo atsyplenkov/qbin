@@ -93,14 +93,16 @@ pub(crate) fn point_to_cell(lat: f64, lng: f64, res: u8) -> Cell {
 }
 
 /// Convert cell into point
-pub(crate) fn cell_to_point(cell: &Cell) -> (f64, f64) {
+pub(crate) fn cell_to_point(cell: &Cell) -> [f64; 2] {
     assert!(cell.is_valid(), "Quadbin cell index is not valid");
 
     let tile = cell.to_tile();
     let lat = tile.to_latitude(0.5);
     let lon = tile.to_longitude(0.5);
 
-    (lat, lon)
+    // Return array, not tuple, as it more memory efficient
+    // See https://doc.rust-lang.org/stable/book/ch03-02-data-types.html#the-array-type
+    [lat, lon]
 }
 
 /// Compute the parent cell for a specific resolution.

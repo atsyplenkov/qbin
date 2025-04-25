@@ -110,12 +110,12 @@ fn test_cell_to_bbox() {
 fn test_cell_to_point() {
     assert_eq!(
         Cell::new(5209574053332910079_u64).to_point(),
-        (-11.178401873711776, 33.75)
+        [-11.178401873711776, 33.75]
     );
 
     let coords = Cell::new(5309133744805926483_u64).to_point();
-    assert_relative_eq!(coords.0, -41.28303708488909, epsilon = 1e-6);
-    assert_relative_eq!(coords.1, 174.77727502584457, epsilon = 1e-6)
+    assert_relative_eq!(coords[0], -41.28303708488909, epsilon = 1e-6);
+    assert_relative_eq!(coords[1], 174.77727502584457, epsilon = 1e-6)
 }
 
 // Get cell resolution

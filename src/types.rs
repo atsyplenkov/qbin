@@ -3,73 +3,6 @@ use crate::cells::*;
 use crate::utils::*;
 use core::num::NonZeroU64;
 
-/// A single tile coordinates
-///
-/// _Internal struct_
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub(crate) struct Tile {
-    pub x: u32,
-    pub y: u32,
-    pub z: u8,
-}
-
-impl Tile {
-    /// Create a new tile.
-    pub fn new(x: u32, y: u32, z: u8) -> Tile {
-        Tile { x, y, z }
-    }
-
-    /// Convert to Quadbin cell.
-    pub fn to_cell(self) -> Cell {
-        tile_to_cell(self)
-    }
-
-    /// Compute the tile for a longitude and latitude in a specific resolution.
-    pub fn from_point(lat: f64, lng: f64, res: u8) -> Self {
-        point_to_tile(lat, lng, res)
-    }
-
-    /// Approximate tile area in square meters.
-    pub fn area(&self) -> f64 {
-        tile_area(self)
-    }
-
-    /// Return tile's latitude.
-    ///
-    /// See also [Tile::to_longitude].
-    ///
-    pub fn to_latitude(self, offset: f64) -> f64 {
-        tile_to_latitude(&self, offset)
-    }
-
-    /// Return tile's longitude.
-    ///
-    /// See also [Tile::to_latitude].
-    ///
-    pub fn to_longitude(self, offset: f64) -> f64 {
-        tile_to_longitude(&self, offset)
-    }
-
-    /// Get tile's siblings.
-    pub fn neighbor(&self, direction: Direction) -> Option<Self> {
-        tile_neighbor(self, direction)
-    }
-
-    /// Compute a hash from the tile.
-    #[allow(dead_code)]
-    pub fn to_hash(self) -> u64 {
-        to_tile_hash(&self)
-    }
-
-    /// Compute a tile from the hash.
-    #[allow(dead_code)]
-    pub fn from_hash(tile_hash: u64) -> Tile {
-        from_tile_hash(tile_hash)
-    }
-}
-
-// --------------------------------------------------------
-
 /// Represents a cell in the Quadbin grid system at a
 /// particular resolution.
 ///
@@ -147,11 +80,13 @@ impl Cell {
         cell_to_parent(self, parent_res)
     }
 
-    /// Find cell's neighbor for a specific [Direction].
+    /// Find the Cell's neighbor in a specific [Direction].
     ///
-    /// In original JavaScript implementation this operation is called
-    /// sibling. However, for the Rust naming convention, we decided to
-    /// name sibling's as neighbors.
+    /// In the original JavaScript implementation, this operation is called
+    /// sibling. However, following the H3 naming convention, we decided
+    /// to name sibling's as neighbors.
+    ///
+    /// See [Direction] for allowed arguments.
     ///
     /// # Example
     /// ```
@@ -161,6 +96,14 @@ impl Cell {
     /// assert_eq!(sibling, Some(Cell::new(5209626829891043327)));
     /// ```
     pub fn neighbor(&self, direction: Direction) -> Option<Self> {
+        let tile = self.to_tile().neighbor(direction);
+        tile.map(Tile::to_cell)
+    }
+
+    /// Find the Cell's sibling in a specific [Direction].
+    ///
+    /// See [Cell::neighbor].
+    pub fn sibling(&self, direction: Direction) -> Option<Self> {
         let tile = self.to_tile().neighbor(direction);
         tile.map(Tile::to_cell)
     }
@@ -201,7 +144,15 @@ impl Cell {
     ///
     /// Returns a tuple with latitude and longitude in degrees.
     ///
-    pub fn to_point(&self) -> (f64, f64) {
+    /// # Example
+    /// ```
+    /// use quadbin::Cell;
+    ///
+    /// let coords = Cell::new(5209574053332910079_u64).to_point();
+    /// assert_eq!(coords, [-11.178401873711776, 33.75]);
+    /// ```
+    ///
+    pub fn to_point(&self) -> [f64; 2] {
         // TODO: return an array
         cell_to_point(self)
     }
@@ -247,3 +198,70 @@ impl Cell {
 
 // TODO:
 // Detect direction from neighbor https://github.com/HydroniumLabs/h3o/blob/ad2bebf52eab218d66b0bf213b14a2802bf616f7/src/base_cell.rs#L135C1-L150C6
+
+// --------------------------------------------------------
+
+/// A single tile coordinates
+///
+/// _Internal struct_
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub(crate) struct Tile {
+    pub x: u32,
+    pub y: u32,
+    pub z: u8,
+}
+
+impl Tile {
+    /// Create a new tile.
+    pub fn new(x: u32, y: u32, z: u8) -> Tile {
+        Tile { x, y, z }
+    }
+
+    /// Convert to Quadbin cell.
+    pub fn to_cell(self) -> Cell {
+        tile_to_cell(self)
+    }
+
+    /// Compute the tile for a longitude and latitude in a specific resolution.
+    pub fn from_point(lat: f64, lng: f64, res: u8) -> Self {
+        point_to_tile(lat, lng, res)
+    }
+
+    /// Approximate tile area in square meters.
+    pub fn area(&self) -> f64 {
+        tile_area(self)
+    }
+
+    /// Return tile's latitude.
+    ///
+    /// See also [Tile::to_longitude].
+    ///
+    pub fn to_latitude(self, offset: f64) -> f64 {
+        tile_to_latitude(&self, offset)
+    }
+
+    /// Return tile's longitude.
+    ///
+    /// See also [Tile::to_latitude].
+    ///
+    pub fn to_longitude(self, offset: f64) -> f64 {
+        tile_to_longitude(&self, offset)
+    }
+
+    /// Get tile's siblings.
+    pub fn neighbor(&self, direction: Direction) -> Option<Self> {
+        tile_neighbor(self, direction)
+    }
+
+    /// Compute a hash from the tile.
+    #[allow(dead_code)]
+    pub fn to_hash(self) -> u64 {
+        to_tile_hash(&self)
+    }
+
+    /// Compute a tile from the hash.
+    #[allow(dead_code)]
+    pub fn from_hash(tile_hash: u64) -> Tile {
+        from_tile_hash(tile_hash)
+    }
+}

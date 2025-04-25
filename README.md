@@ -25,7 +25,7 @@ assert_eq!(qb, Cell::new(5234261499580514303_u64));
 
 // Get a point from a Quadbin cell
 let coords = Cell::new(5209574053332910079_u64).to_point();
-assert_eq!(coords, (-11.178401873711776, 33.75));
+assert_eq!(coords, [-11.178401873711776, 33.75]);
 
 // Quadbin resolution at equator in m²
 let area = Cell::from_point(0.0, 0.0, 26).area_m2();
