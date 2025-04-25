@@ -125,8 +125,8 @@ pub(crate) fn tile_area(tile: &Tile) -> f64 {
     area
 }
 
-/// Compute the sibling (neighbour) tile in a specific direction.
-pub(crate) fn tile_sibling(tile: &Tile, direction: u8) -> Option<Tile> {
+/// Compute the neighbour (sibling) tile in a specific direction.
+pub(crate) fn tile_neighbor(tile: &Tile, direction: u8) -> Option<Tile> {
     // Early return for a low level == no neighbors
     // TODO: Think about what should one return instead of None
     if tile.z == 0_u8 {

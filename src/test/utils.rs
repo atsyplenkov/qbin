@@ -105,10 +105,10 @@ fn test_tile_scalefactor() {
 #[test]
 fn test_tile_sibling() {
     // Test zoom level 0 (should always return None)
-    assert_eq!(Tile::new(0, 0, 0).get_sibling(0), None); // UP
-    assert_eq!(Tile::new(0, 0, 0).get_sibling(1), None); // RIGHT
-    assert_eq!(Tile::new(0, 0, 0).get_sibling(2), None); // LEFT
-    assert_eq!(Tile::new(0, 0, 0).get_sibling(3), None); // DOWN
+    assert_eq!(Tile::new(0, 0, 0).neighbor(0), None); // UP
+    assert_eq!(Tile::new(0, 0, 0).neighbor(1), None); // RIGHT
+    assert_eq!(Tile::new(0, 0, 0).neighbor(2), None); // LEFT
+    assert_eq!(Tile::new(0, 0, 0).neighbor(3), None); // DOWN
 
     // Test UP direction (0)
     let up_cases = [
@@ -117,7 +117,7 @@ fn test_tile_sibling() {
     ];
 
     for (tile, expected) in up_cases.iter() {
-        assert_eq!(tile.get_sibling(0), *expected);
+        assert_eq!(tile.neighbor(0), *expected);
     }
 
     // Test RIGHT direction (1)
@@ -127,7 +127,7 @@ fn test_tile_sibling() {
     ];
 
     for (tile, expected) in right_cases.iter() {
-        assert_eq!(tile.get_sibling(1), *expected);
+        assert_eq!(tile.neighbor(1), *expected);
     }
 
     // Test LEFT direction (2)
@@ -137,7 +137,7 @@ fn test_tile_sibling() {
     ];
 
     for (tile, expected) in left_cases.iter() {
-        assert_eq!(tile.get_sibling(2), *expected);
+        assert_eq!(tile.neighbor(2), *expected);
     }
 
     // Test DOWN direction (3)
@@ -147,10 +147,10 @@ fn test_tile_sibling() {
     ];
 
     for (tile, expected) in down_cases.iter() {
-        assert_eq!(tile.get_sibling(3), *expected);
+        assert_eq!(tile.neighbor(3), *expected);
     }
 
     // Test invalid direction
-    assert_eq!(Tile::new(1, 1, 2).get_sibling(4), None);
-    assert_eq!(Tile::new(1, 1, 2).get_sibling(255), None);
+    assert_eq!(Tile::new(1, 1, 2).neighbor(4), None);
+    assert_eq!(Tile::new(1, 1, 2).neighbor(255), None);
 }
