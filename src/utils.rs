@@ -187,6 +187,7 @@ pub(crate) fn to_tile_hash(tile: &Tile) -> u64 {
 }
 
 /// Compute a tile from the hash.
+#[allow(dead_code)]
 pub(crate) fn from_tile_hash(tile_hash: u64) -> Tile {
     // TODO:
     // Return None if hash is invalid
@@ -204,5 +205,6 @@ pub(crate) fn from_tile_hash(tile_hash: u64) -> Tile {
 ///
 /// _For internal use._
 pub fn point_cover(lat: f64, lng: f64, res: u8) -> u64 {
-    Tile::from_point(lat, lng, res).to_hash()
+    let tile = Tile::from_point(lat, lng, res);
+    to_tile_hash(&tile)
 }

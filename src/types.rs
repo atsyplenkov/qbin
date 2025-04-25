@@ -38,16 +38,16 @@ impl Tile {
     ///
     /// See also [Tile::to_longitude].
     ///
-    pub fn to_latitude(&self, offset: f64) -> f64 {
-        tile_to_latitude(self, offset)
+    pub fn to_latitude(self, offset: f64) -> f64 {
+        tile_to_latitude(&self, offset)
     }
 
     /// Return tile's longitude.
     ///
     /// See also [Tile::to_latitude].
     ///
-    pub fn to_longitude(&self, offset: f64) -> f64 {
-        tile_to_longitude(self, offset)
+    pub fn to_longitude(self, offset: f64) -> f64 {
+        tile_to_longitude(&self, offset)
     }
 
     /// Get tile's siblings.
@@ -56,11 +56,13 @@ impl Tile {
     }
 
     /// Compute a hash from the tile.
-    pub fn to_hash(&self) -> u64 {
-        to_tile_hash(self)
+    #[allow(dead_code)]
+    pub fn to_hash(self) -> u64 {
+        to_tile_hash(&self)
     }
 
     /// Compute a tile from the hash.
+    #[allow(dead_code)]
     pub fn from_hash(tile_hash: u64) -> Tile {
         from_tile_hash(tile_hash)
     }
@@ -154,7 +156,7 @@ impl Cell {
     /// # Example
     /// ```
     /// use quadbin::{Cell, Direction};
-    /// 
+    ///
     /// let sibling = Cell::new(5209574053332910079).neighbor(Direction::Right);
     /// assert_eq!(sibling, Some(Cell::new(5209626829891043327)));
     /// ```
@@ -238,8 +240,8 @@ impl Cell {
     }
 
     /// Convert a Quadbin cell into a tile.
-    pub(crate) fn to_tile(&self) -> Tile {
-        cell_to_tile(self)
+    pub(crate) fn to_tile(self) -> Tile {
+        cell_to_tile(&self)
     }
 }
 

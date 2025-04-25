@@ -16,7 +16,7 @@ fn test_tile_hashing() {
 
     for (tile, hash) in cases.iter() {
         // Tile to hash
-        assert_eq!(Tile::to_hash(&tile), *hash);
+        assert_eq!(tile.to_hash(), *hash);
         // Hash to tile
         assert_eq!(Tile::from_hash(*hash), *tile);
     }
