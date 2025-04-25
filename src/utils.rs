@@ -202,9 +202,8 @@ pub(crate) fn from_tile_hash(tile_hash: u64) -> Tile {
 }
 
 /// Return the tiles hashes that cover a point.
-///
-/// _For internal use._
-pub fn point_cover(lat: f64, lng: f64, res: u8) -> u64 {
+#[allow(dead_code)]
+pub(crate) fn point_cover(lat: f64, lng: f64, res: u8) -> u64 {
     let tile = Tile::from_point(lat, lng, res);
     to_tile_hash(&tile)
 }
