@@ -94,6 +94,9 @@ pub(crate) fn tile_scalefactor(tile: &Tile) -> f64 {
 }
 
 /// Approximate area of a tile in square meters.
+// TODO:
+// This is currently a bottleneck, which requires an update.
+// See benches for area estimation assessment
 pub(crate) fn tile_area(tile: &Tile) -> f64 {
     // Get Tile coords
     let x = &tile.x;
