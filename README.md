@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/atsyplenkov/qbin/blob/main/LICENSE) 
 [![crates.io](https://img.shields.io/crates/v/qbin.svg?logo=rust)](https://crates.io/crates/qbin) 
 [![Build & Test](https://github.com/atsyplenkov/qbin/actions/workflows/rust.yml/badge.svg)](https://github.com/atsyplenkov/qbin/actions/workflows/rust.yml)
-[![codecov](https://codecov.io/gh/atsyplenkov/qbin/graph/badge.svg?token=4SZ4RI3ILS)](https://codecov.io/gh/atsyplenkov/quadbin)
+[![codecov](https://codecov.io/gh/atsyplenkov/qbin/graph/badge.svg?token=4SZ4RI3ILS)](https://codecov.io/gh/atsyplenkov/qbin)
 
 A Rust implementation of Quadbin, a hierarchical geospatial index tiling approach developed by [CARTO](https://github.com/CartoDB). Like the [Microsoft's Bing Maps Tile System](https://docs.microsoft.com/en-us/bingmaps/articles/bing-maps-tile-system) (aka Quadkey), Quadbin uniformly subdivides a map in Mercator projection into four squares at different resolution levels, from 0 to 26 (less than 1 m² at the equator). However, unlike Quadkey, Quadbin stores the grid cell index in a 64-bit integer.
 
