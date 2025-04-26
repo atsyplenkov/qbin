@@ -1,11 +1,11 @@
 [package]
-name = "quadbin"
+name = "qbin"
 version = "0.1.0"
 authors = ["Anatoly Tsyplenkov <atsyplenkov@fastmail.com>"]
 edition = "2024"
 license = "MIT"
-repository = "https://github.com/atsyplenkov/quadbin"
-description = "Encoding and decoding geographical coordinates to and from QuadBin, a hierarchical geospatial indexing system for square cells in Web Mercator projection developed by Carto. An improved version of Microsoft's Bing Maps Tile System, aka Quadkey."
+repository = "https://github.com/atsyplenkov/qbin"
+description = "Encoding and decoding geographical coordinates to and from Quadbin, a hierarchical geospatial indexing system for square cells in Web Mercator projection developed by Carto. An improved version of Microsoft's Bing Maps Tile System, aka Quadkey."
 keywords = ["quadbin", "quadkey", "spatial", "spatial-index"]
 categories = ["data-structures", "science::geo"]
 

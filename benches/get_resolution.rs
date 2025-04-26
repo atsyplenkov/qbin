@@ -1,6 +1,6 @@
 use criterion::{Criterion, black_box};
 use h3o::CellIndex;
-use quadbin::Cell;
+use qbin::Cell;
 
 const INPUT_H3: u64 = 0x8f734e64992d6d8;
 const INPUT_QB: u64 = 5209574053332910079;

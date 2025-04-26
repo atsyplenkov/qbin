@@ -1,6 +1,6 @@
 use criterion::{BenchmarkId, Criterion, black_box};
 use h3o::CellIndex;
-use quadbin::Cell;
+use qbin::Cell;
 
 pub const HEXAGONS: [u64; 16] = [
     0x801ffffffffffff,

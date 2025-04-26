@@ -39,7 +39,7 @@ impl Direction {
     /// # Example
     ///
     /// ```
-    /// use quadbin::Direction;
+    /// use qbin::Direction;
     ///
     /// let directions = Direction::iter().collect::<Vec<_>>();
     /// ```

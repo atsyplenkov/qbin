@@ -35,7 +35,7 @@ impl Cell {
     ///
     /// # Example
     /// ```
-    /// let qb_cell = quadbin::Cell::new(5234261499580514303);
+    /// let qb_cell = qbin::Cell::new(5234261499580514303);
     /// ```
     pub fn new(value: u64) -> Cell {
         assert!(
@@ -49,7 +49,7 @@ impl Cell {
     ///
     /// # Example
     /// ```
-    /// let qb_cell = quadbin::Cell::new(5234261499580514303);
+    /// let qb_cell = qbin::Cell::new(5234261499580514303);
     /// assert_eq!(qb_cell.is_valid(), true)
     /// ```
     pub fn is_valid(&self) -> bool {
@@ -60,7 +60,7 @@ impl Cell {
     ///
     /// # Example
     /// ```
-    /// let qb_cell = quadbin::Cell::new(5234261499580514303);
+    /// let qb_cell = qbin::Cell::new(5234261499580514303);
     /// let res = qb_cell.resolution();
     /// assert_eq!(res, 10)
     /// ```
@@ -72,9 +72,9 @@ impl Cell {
     ///
     /// # Example
     /// ```
-    /// let qb_cell = quadbin::Cell::new(5209574053332910079);
+    /// let qb_cell = qbin::Cell::new(5209574053332910079);
     /// let parent = qb_cell.parent(2_u8);
-    /// assert_eq!(parent, quadbin::Cell::new(5200813144682790911))
+    /// assert_eq!(parent, qbin::Cell::new(5200813144682790911))
     /// ```
     pub fn parent(&self, parent_res: u8) -> Cell {
         cell_to_parent(self, parent_res)
@@ -93,7 +93,7 @@ impl Cell {
     ///
     /// # Example
     /// ```
-    /// use quadbin::{Cell, Direction};
+    /// use qbin::{Cell, Direction};
     ///
     /// let sibling = Cell::new(5209574053332910079).neighbor(Direction::Right);
     /// assert_eq!(sibling, Some(Cell::new(5209626829891043327)));
@@ -133,7 +133,7 @@ impl Cell {
     /// ```
     /// use approx::assert_relative_eq;
     ///
-    /// let area = quadbin::Cell::new(5234261499580514303_u64).area_m2();
+    /// let area = qbin::Cell::new(5234261499580514303_u64).area_m2();
     /// assert_relative_eq!(area, 888546364.7859862, epsilon = 1e-6)
     ///
     /// ```
@@ -149,7 +149,7 @@ impl Cell {
     /// ```
     /// use approx::assert_relative_eq;
     ///
-    /// let area = quadbin::Cell::new(5234261499580514303_u64).area_km2();
+    /// let area = qbin::Cell::new(5234261499580514303_u64).area_km2();
     /// assert_relative_eq!(area, 888.5463647859862, epsilon = 1e-6)
     ///
     /// ```
@@ -163,7 +163,7 @@ impl Cell {
     ///
     /// # Example
     /// ```
-    /// use quadbin::Cell;
+    /// use qbin::Cell;
     ///
     /// let coords = Cell::new(5209574053332910079_u64).to_point();
     /// assert_eq!(coords, [-11.178401873711776, 33.75]);
@@ -180,7 +180,7 @@ impl Cell {
     ///
     /// # Example
     /// ```
-    /// let bbox = quadbin::Cell::new(5209574053332910079).to_bbox();
+    /// let bbox = qbin::Cell::new(5209574053332910079).to_bbox();
     /// assert_eq!( bbox, [22.5, -21.943045533438166, 45.0, 0.0])
     /// ```
     pub fn to_bbox(&self) -> [f64; 4] {
@@ -199,7 +199,7 @@ impl Cell {
     /// # Example
     ///
     /// ```
-    /// let cell = quadbin::Cell::from_point(-41.28303675124842, 174.77727344223067, 26);
+    /// let cell = qbin::Cell::from_point(-41.28303675124842, 174.77727344223067, 26);
     /// assert_eq!(cell.get(), 5309133744805926483_u64)
     /// ```
     pub fn from_point(lat: f64, lng: f64, res: u8) -> Cell {

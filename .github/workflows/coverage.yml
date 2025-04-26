@@ -31,5 +31,5 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          slug: atsyplenkov/quadbin
+          slug: atsyplenkov/qbin
           files: lcov.info

@@ -385,7 +385,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "quadbin"
+name = "qbin"
 version = "0.1.0"
 dependencies = [
  "approx",
