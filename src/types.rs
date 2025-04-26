@@ -207,8 +207,13 @@ impl Cell {
     }
 
     /// Convert a Quadbin cell into a tile.
-    pub(crate) fn to_tile(self) -> Tile {
+    pub fn to_tile(self) -> Tile {
         cell_to_tile(&self)
+    }
+    
+    /// Convert a Quadbin cell into a tile using optimized algorithm.
+    pub fn optimized_to_tile(self) -> Tile {
+        optimized_cell_to_tile(&self)
     }
 }
 
@@ -227,7 +232,7 @@ impl fmt::Display for Cell {
 ///
 /// _Internal struct_
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub(crate) struct Tile {
+pub struct Tile {
     pub x: u32,
     pub y: u32,
     pub z: u8,
@@ -242,6 +247,11 @@ impl Tile {
     /// Convert to Quadbin cell.
     pub fn to_cell(self) -> Cell {
         tile_to_cell(self)
+    }
+    
+    /// Convert to Quadbin cell using optimized algorithm.
+    pub fn optimized_to_cell(self) -> Cell {
+        optimized_tile_to_cell(self)
     }
 
     /// Compute the tile for a longitude and latitude in a specific resolution.

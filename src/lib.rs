@@ -6,7 +6,7 @@ pub mod error;
 pub mod utils;
 
 mod types;
-pub use crate::types::Cell;
+pub use crate::types::{Cell, Tile};
 
 mod direction;
 pub use crate::direction::Direction;

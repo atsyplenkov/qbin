@@ -120,3 +120,61 @@ pub(crate) fn cell_to_parent(cell: &Cell, parent_res: u8) -> Cell {
 
     Cell::new(result)
 }
+
+pub(crate) fn optimized_cell_to_tile(cell: &Cell) -> Tile {
+    assert!(cell.is_valid(), "Quadbin cell index is not valid");
+
+    let cell64 = cell.get();
+    let z = (cell64 >> 52) & 31;
+    let q = (cell64 & FOOTER) << 12;
+
+    // Process in 8-bit chunks
+    let mut x = 0u32;
+    let mut y = 0u32;
+
+    for i in 0..4 {
+        let byte = ((q >> (i * 8)) & 0xFF) as usize;
+        x |= (deinterleave_table()[0][byte] as u32) << (i * 4);
+        y |= (deinterleave_table()[1][byte] as u32) << (i * 4);
+    }
+
+    x >>= 32 - z;
+    y >>= 32 - z;
+
+    Tile::new(x, y, z as u8)
+}
+
+pub(crate) fn optimized_tile_to_cell(tile: Tile) -> Cell {
+    // This optimized version uses a table-based approach for bit interleaving
+    // but follows the same overall structure as the original function
+    let mut x = tile.x as u64;
+    let mut y = tile.y as u64;
+    let z = tile.z as u64;
+
+    // Apply the shift like in the original function
+    x <<= 32 - z;
+    y <<= 32 - z;
+
+    // Use lookup tables for the interleaving operations
+    let table = interleave_table();
+    
+    // Break down into bytes and use table lookup for each byte
+    let mut result_x = 0u64;
+    let mut result_y = 0u64;
+    
+    // Process each byte separately
+    for i in 0..4 {
+        let shift = i * 8;
+        let x_byte = ((x >> (24 - shift)) & 0xFF) as usize;
+        let y_byte = ((y >> (24 - shift)) & 0xFF) as usize;
+        
+        result_x |= (table[x_byte] as u64) << (shift * 2);
+        result_y |= (table[y_byte] as u64) << (shift * 2);
+    }
+    
+    // Combine the results like the original function
+    let cell = HEADER | (1 << 59) | (z << 52) | ((result_x | (result_y << 1)) >> 12) | (FOOTER >> (z * 2));
+    
+    // Ensure the cell is valid before returning
+    Cell::new(cell)
+}

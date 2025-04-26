@@ -13,3 +13,9 @@ categories = ["data-structures", "science::geo"]
 
 [dev-dependencies]
 approx = "0.5.1"
+criterion = "0.5.1"
+rand = "0.9.1"
+
+[[bench]]
+name = "morton_benchmarks"
+harness = false

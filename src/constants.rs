@@ -38,3 +38,48 @@ pub(crate) const B: &[u64; 6] = &[
     0x0000_0000_FFFF_FFFF,
 ];
 pub(crate) const S: &[u8; 5] = &[1, 2, 4, 8, 16];
+
+use std::sync::OnceLock;
+
+pub(crate) fn deinterleave_table() -> &'static [[u8; 256]; 2] {
+    static DEINTERLEAVE_TABLE: OnceLock<[[u8; 256]; 2]> = OnceLock::new();
+    DEINTERLEAVE_TABLE.get_or_init(|| {
+        let mut even = [0u8; 256];
+        let mut odd = [0u8; 256];
+
+        for i in 0..256 {
+            let mut v = i as u8;
+            let mut even_val = 0u8;
+            let mut odd_val = 0u8;
+
+            for j in 0..4 {
+                even_val |= ((v & 1) << j) as u8;
+                v >>= 1;
+                odd_val |= ((v & 1) << j) as u8;
+                v >>= 1;
+            }
+
+            even[i] = even_val;
+            odd[i] = odd_val;
+        }
+
+        [even, odd]
+    })
+}
+
+
+// Precompute interleaved values for 8-bit chunks
+pub(crate) fn interleave_table() -> &'static [u16; 256] {
+    static INTERLEAVE_TABLE: OnceLock<[u16; 256]> = OnceLock::new();
+    INTERLEAVE_TABLE.get_or_init(|| {
+        let mut table = [0u16; 256];
+        for i in 0..256 {
+            let mut x = i as u16;
+            x = (x | (x << 4)) & 0x0F0F;
+            x = (x | (x << 2)) & 0x3333;
+            x = (x | (x << 1)) & 0x5555;
+            table[i] = x;
+        }
+        table
+    })
+}
