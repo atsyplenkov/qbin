@@ -1,7 +1,8 @@
 # Quadbin
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/atsyplenkov/qbin/blob/main/LICENSE) 
-[![crates.io](https://img.shields.io/crates/v/qbin.svg?logo=rust)](https://crates.io/crates/qbin) 
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/atsyplenkov/qbin/blob/main/LICENSE)
+[![crates.io](https://img.shields.io/crates/v/qbin.svg?logo=rust)](https://crates.io/crates/qbin)
+[![Docs.rs](https://img.shields.io/docsrs/qbin?label=docs.rs&logo=rust)](https://docs.rs/qbin)
 [![Build & Test](https://github.com/atsyplenkov/qbin/actions/workflows/rust.yml/badge.svg)](https://github.com/atsyplenkov/qbin/actions/workflows/rust.yml)
 [![codecov](https://codecov.io/gh/atsyplenkov/qbin/graph/badge.svg?token=4SZ4RI3ILS)](https://codecov.io/gh/atsyplenkov/qbin)
 
