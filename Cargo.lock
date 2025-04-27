@@ -221,6 +221,27 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "28a80e3145d8ad11ba0995949bbcf48b9df2be62772b3d351ef017dff6ecb853"
 
 [[package]]
+name = "geo-types"
+version = "0.7.16"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "62ddb1950450d67efee2bbc5e429c68d052a822de3aad010d28b351fbb705224"
+dependencies = [
+ "approx",
+ "num-traits",
+ "serde",
+]
+
+[[package]]
+name = "geohash"
+version = "0.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0fb94b1a65401d6cbf22958a9040aa364812c26674f841bee538b12c135db1e6"
+dependencies = [
+ "geo-types",
+ "libm",
+]
+
+[[package]]
 name = "getrandom"
 version = "0.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -333,6 +354,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841"
 dependencies = [
  "autocfg",
+ "libm",
 ]
 
 [[package]]
@@ -390,6 +412,7 @@ version = "0.2.0"
 dependencies = [
  "approx",
  "criterion",
+ "geohash",
  "h3o",
 ]
 
