@@ -9,9 +9,9 @@
         <img src="https://img.shields.io/codecov/c/gh/atsyplenkov/qbin?style=flat&labelColor=1C2C2E&color=dea584&logo=Codecov&logoColor=white"></a>
     <br>
     <a href="https://github.com/atsyplenkov/qbin/actions/workflows/rust.yml">
-        <img src="https://img.shields.io/github/actions/workflow/status/atsyplenkov/qbin/rust.yml?style=flat&labelColor=1C2C2E&color=dea584&logo=GitHub%20Actions&logoColor=BEC5C9"></a>
+        <img src="https://img.shields.io/github/actions/workflow/status/atsyplenkov/qbin/rust.yml?style=flat&labelColor=1C2C2E&color=dea584&logo=GitHub%20Actions&logoColor=white"></a>
     <a href="https://docs.rs/qbin/">
-        <img src="https://img.shields.io/docsrs/qbin?style=flat&labelColor=1C2C2E&color=dea584&logo=Rust&logoColor=BEC5C9"></a>
+        <img src="https://img.shields.io/docsrs/qbin?style=flat&labelColor=1C2C2E&color=dea584&logo=Rust&logoColor=white"></a>
     <br>
 </p>
 
