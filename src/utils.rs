@@ -1,6 +1,6 @@
 use crate::constants::*;
-use crate::direction::Direction;
-use crate::types::Tile;
+use crate::directions::Direction;
+use crate::tiles::Tile;
 use std::f64::consts::PI;
 
 /// Clip a value between a minimum and maximum value

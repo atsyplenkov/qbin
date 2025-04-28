@@ -1,5 +1,6 @@
-use crate::direction::Direction;
-use crate::types::*;
+use crate::cells::*;
+use crate::directions::Direction;
+use crate::tiles::*;
 use approx::assert_relative_eq;
 
 // Constants to save some typing

@@ -1,5 +1,5 @@
-use crate::direction::*;
-use crate::error::*;
+use crate::directions::*;
+use crate::errors::*;
 
 #[test]
 fn test_valid_direction() {

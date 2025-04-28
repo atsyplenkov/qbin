@@ -13,6 +13,7 @@ keywords = ["quadbin", "quadkey", "spatial", "spatial-index"]
 categories = ["data-structures", "science::geo"]
 
 [dependencies]
+geohash = "0.13.1"
 
 [dev-dependencies]
 approx = "0.5.1"

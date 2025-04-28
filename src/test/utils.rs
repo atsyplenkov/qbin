@@ -1,5 +1,5 @@
-use crate::direction::Direction;
-use crate::types::Tile;
+use crate::directions::Direction;
+use crate::tiles::Tile;
 use crate::utils::{point_to_tile_fraction, tile_scalefactor};
 use approx::assert_relative_eq;
 

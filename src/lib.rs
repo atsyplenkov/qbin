@@ -1,15 +1,20 @@
 #![doc = include_str!("../README.md")]
 
+// Quadbin cell itself
 pub mod cells;
+pub use crate::cells::Cell;
+
+// Direction struct
+mod directions;
+pub use crate::directions::Direction;
+
+// Errors
+pub mod errors;
+
+// Internal stuff
 mod constants;
-pub mod error;
-pub mod utils;
-
-mod types;
-pub use crate::types::Cell;
-
-mod direction;
-pub use crate::direction::Direction;
+mod tiles;
+mod utils;
 
 #[cfg(test)]
 mod test;
