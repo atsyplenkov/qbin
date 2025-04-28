@@ -1,6 +1,6 @@
 [package]
 name = "qbin"
-version = "0.2.0"
+version = "0.1.1"
 authors = ["Anatoly Tsyplenkov <atsyplenkov@fastmail.com>"]
 edition = "2024"
 license = "MIT"
@@ -13,7 +13,6 @@ keywords = ["quadbin", "quadkey", "spatial", "spatial-index"]
 categories = ["data-structures", "science::geo"]
 
 [dependencies]
-geohash = "0.13.1"
 
 [dev-dependencies]
 approx = "0.5.1"
