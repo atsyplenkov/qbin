@@ -13,7 +13,7 @@ pub fn bench(c: &mut Criterion) {
         b.iter(|| black_box(index).resolution())
     });
     group.bench_function("qbin", |b| {
-        let index = Cell::new(INPUT_QB);
+        let index = Cell::try_from(INPUT_QB).expect("cell index");
         b.iter(|| black_box(index).resolution())
     });
 

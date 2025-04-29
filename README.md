@@ -37,10 +37,10 @@ let longitude = -3.7038;
 let latitude = 40.4168;
 let resolution = 10_u8;
 let qb = Cell::from_point(latitude, longitude, resolution);
-assert_eq!(qb, Cell::new(5234261499580514303_u64));
+assert_eq!(qb, Cell::try_from(5234261499580514303_u64));
 
 // Get a point from a Quadbin cell
-let coords = Cell::new(5209574053332910079_u64).to_point();
+let coords = Cell::try_from(5209574053332910079_u64).to_point();
 assert_eq!(coords, [-11.178401873711776, 33.75]);
 
 // Quadbin resolution at equator in m²

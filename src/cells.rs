@@ -1,5 +1,8 @@
 use crate::Direction;
 use crate::constants::*;
+use crate::errors;
+use crate::errors::InvalidCell;
+use crate::errors::InvalidDirection;
 use crate::tiles::*;
 use crate::utils::*;
 use core::{fmt, num::NonZeroU64};
@@ -38,12 +41,8 @@ impl Cell {
     /// ```
     /// let qb_cell = qbin::Cell::new(5234261499580514303);
     /// ```
-    pub fn new(value: u64) -> Cell {
-        assert!(
-            is_valid_cell(value),
-            "Provided Quadbin Cell index is invalid"
-        );
-        Cell(NonZeroU64::new(value).expect("non-zero cell index"))
+    pub fn new(value: u64) -> Result<Self, InvalidCell> {
+        Cell::try_from(value)
     }
 
     /// Quadbin cell index validation.
@@ -77,51 +76,51 @@ impl Cell {
     /// let parent = qb_cell.parent(2_u8);
     /// assert_eq!(parent, qbin::Cell::new(5200813144682790911))
     /// ```
-    pub fn parent(&self, parent_res: u8) -> Cell {
+    pub fn parent(&self, parent_res: u8) -> Result<Cell, InvalidCell> {
         cell_to_parent(self, parent_res)
     }
 
     // TODO:
     // Add child and/or children
 
-    /// Find the Cell's neighbor in a specific [Direction].
-    ///
-    /// In the original JavaScript implementation, this operation is called
-    /// sibling. However, following the H3 naming convention, we decided
-    /// to name sibling's as neighbors.
-    ///
-    /// See [Direction] for allowed arguments.
-    ///
-    /// # Example
-    /// ```
-    /// use qbin::{Cell, Direction};
-    ///
-    /// let sibling = Cell::new(5209574053332910079).neighbor(Direction::Right);
-    /// assert_eq!(sibling, Some(Cell::new(5209626829891043327)));
-    /// ```
-    pub fn neighbor(&self, direction: Direction) -> Option<Self> {
-        let tile = self.to_tile().neighbor(direction);
-        tile.map(Tile::to_cell)
-    }
+    // /// Find the Cell's neighbor in a specific [Direction].
+    // ///
+    // /// In the original JavaScript implementation, this operation is called
+    // /// sibling. However, following the H3 naming convention, we decided
+    // /// to name sibling's as neighbors.
+    // ///
+    // /// See [Direction] for allowed arguments.
+    // ///
+    // /// # Example
+    // /// ```
+    // /// use qbin::{Cell, Direction};
+    // ///
+    // /// let sibling = Cell::new(5209574053332910079).neighbor(Direction::Right);
+    // /// assert_eq!(sibling, Some(Cell::new(5209626829891043327)));
+    // /// ```
+    // pub fn neighbor(&self, direction: Direction) -> Result<Cell, InvalidCell, InvalidDirection> {
+    //     let tile = self.to_tile().neighbor(direction);
+    //     tile.map(Tile::to_cell)
+    // }
 
-    /// Find the Cell's sibling in a specific [Direction].
-    ///
-    /// See [Cell::neighbor].
-    pub fn sibling(&self, direction: Direction) -> Option<Self> {
-        let tile = self.to_tile().neighbor(direction);
-        tile.map(Tile::to_cell)
-    }
+    // /// Find the Cell's sibling in a specific [Direction].
+    // ///
+    // /// See [Cell::neighbor].
+    // pub fn sibling(&self, direction: Direction) -> Result<Cell, InvalidCell, InvalidDirection> {
+    //     let tile = self.to_tile().neighbor(direction);
+    //     tile.to_cell()
+    // }
 
-    /// List all Cell's neighbors.
-    pub fn neighbors(&self) -> [Option<Cell>; 4] {
-        let mut neighbors = [None; 4];
+    // /// List all Cell's neighbors.
+    // pub fn neighbors(&self) -> [Option<Cell>; 4] {
+    //     let mut neighbors = [None; 4];
 
-        for (i, neighbor) in neighbors.iter_mut().enumerate() {
-            *neighbor = self.neighbor(Direction::new_unchecked(i as u8));
-        }
+    //     for (i, neighbor) in neighbors.iter_mut().enumerate() {
+    //         *neighbor = self.neighbor(Direction::new_unchecked(i as u8));
+    //     }
 
-        neighbors
-    }
+    //     neighbors
+    // }
 
     // TODO:
     // Add `direction_to_neighbor` -- return Direction to neighbor
@@ -203,7 +202,7 @@ impl Cell {
     /// let cell = qbin::Cell::from_point(-41.28303675124842, 174.77727344223067, 26);
     /// assert_eq!(cell.get(), 5309133744805926483_u64)
     /// ```
-    pub fn from_point(lat: f64, lng: f64, res: u8) -> Cell {
+    pub fn from_point(lat: f64, lng: f64, res: u8) -> Result<Cell, InvalidCell> {
         point_to_cell(lat, lng, res)
     }
 
@@ -219,13 +218,27 @@ impl fmt::Display for Cell {
     }
 }
 
+impl TryFrom<u64> for Cell {
+    type Error = errors::InvalidCell;
+
+    fn try_from(value: u64) -> Result<Self, Self::Error> {
+        if !is_valid_cell(value) {
+            return Err(Self::Error::new(
+                Some(value),
+                "Provided Quadbin Cell index is invalid",
+            ));
+        }
+
+        Ok(Self(NonZeroU64::new(value).expect("non-zero cell index")))
+    }
+}
+
 // TODO:
 // Detect direction from neighbor https://github.com/HydroniumLabs/h3o/blob/ad2bebf52eab218d66b0bf213b14a2802bf616f7/src/base_cell.rs#L135C1-L150C6
 
 // Internal functions ------------------------------------------------
-
 /// Quadbin cell validation
-pub(crate) fn is_valid_cell(cell64: u64) -> bool {
+fn is_valid_cell(cell64: u64) -> bool {
     let header = HEADER;
     let mode = (cell64 >> 59) & 7;
     let resolution = (cell64 >> 52) & 0x1F;
@@ -241,7 +254,7 @@ pub(crate) fn is_valid_cell(cell64: u64) -> bool {
 }
 
 /// Convert a tile into a Quadbin cell.
-pub(crate) fn tile_to_cell(tile: Tile) -> Cell {
+pub(crate) fn tile_to_cell(tile: Tile) -> Result<Cell, InvalidCell> {
     let mut x = tile.x as u64;
     let mut y = tile.y as u64;
     let z = tile.z as u64;
@@ -265,11 +278,11 @@ pub(crate) fn tile_to_cell(tile: Tile) -> Cell {
     y = (y | (y << S[0])) & B[0];
 
     let cell = HEADER | (1 << 59) | (z << 52) | ((x | (y << 1)) >> 12) | (FOOTER >> (z * 2));
-    Cell::new(cell)
+    Cell::try_from(cell)
 }
 
 /// Convert Quadbin cell into a tile
-pub(crate) fn cell_to_tile(cell: &Cell) -> Tile {
+fn cell_to_tile(cell: &Cell) -> Tile {
     assert!(cell.is_valid(), "Quadbin cell index is not valid");
 
     let cell64 = cell.get();
@@ -303,7 +316,7 @@ pub(crate) fn cell_to_tile(cell: &Cell) -> Tile {
 }
 
 /// Convert a geographic point into a cell.
-pub(crate) fn point_to_cell(lat: f64, lng: f64, res: u8) -> Cell {
+fn point_to_cell(lat: f64, lng: f64, res: u8) -> Result<Cell, InvalidCell> {
     let lng = clip_longitude(lng);
     let lat = clip_latitude(lat);
 
@@ -313,7 +326,7 @@ pub(crate) fn point_to_cell(lat: f64, lng: f64, res: u8) -> Cell {
 }
 
 /// Convert cell into point
-pub(crate) fn cell_to_point(cell: &Cell) -> [f64; 2] {
+fn cell_to_point(cell: &Cell) -> [f64; 2] {
     assert!(cell.is_valid(), "Quadbin cell index is not valid");
 
     let tile = cell.to_tile();
@@ -326,7 +339,7 @@ pub(crate) fn cell_to_point(cell: &Cell) -> [f64; 2] {
 }
 
 /// Compute the parent cell for a specific resolution.
-pub(crate) fn cell_to_parent(cell: &Cell, parent_res: u8) -> Cell {
+fn cell_to_parent(cell: &Cell, parent_res: u8) -> Result<Cell, InvalidCell> {
     // Check resolution
     let resolution = cell.resolution();
     assert!(
@@ -338,5 +351,5 @@ pub(crate) fn cell_to_parent(cell: &Cell, parent_res: u8) -> Cell {
         | ((parent_res as u64) << 52)
         | (FOOTER >> ((parent_res as u64) << 1));
 
-    Cell::new(result)
+    Cell::try_from(result)
 }

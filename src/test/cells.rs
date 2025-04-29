@@ -1,5 +1,6 @@
 use crate::cells::*;
 use crate::directions::Direction;
+use crate::errors::*;
 use crate::tiles::*;
 use approx::assert_relative_eq;
 
@@ -8,29 +9,6 @@ const UP: Direction = Direction::Up;
 const DOWN: Direction = Direction::Down;
 const RIGHT: Direction = Direction::Right;
 const LEFT: Direction = Direction::Left;
-
-// Test validiy of Quadbin cell indexes
-#[test]
-fn test_is_cell_valid() {
-    let cases = [
-        (5209574053332910079_u64, true),
-        (5192650370358181887_u64, true),
-        (5202361257054699519_u64, true),
-        (5291729562728627583_u64, true),
-    ];
-
-    for (cell, expected) in cases.iter() {
-        assert_eq!(Cell::new(*cell).is_valid(), *expected);
-    }
-}
-
-// Expect panic due to invalid cell index
-#[test]
-#[should_panic(expected = "Provided Quadbin Cell index is invalid")]
-fn test_new_invalid_cell() {
-    let _ = Cell::new(5209574053332910078_u64);
-    let _ = Cell::new(6362495557939757055_u64);
-}
 
 // Validation test from original CARTO's `quadbin-js`
 // https://github.com/CartoDB/quadbin-js/blob/40cce2fc6b9dc72bf19c69ffb6705f8b73d24b2c/test/index.spec.ts#L30-L34
@@ -46,12 +24,18 @@ fn test_tile_and_cell_conversion() {
 
     // Tile to cell conversion
     for (x, y, z, cell) in cases.iter() {
-        assert_eq!(Tile::new(*x, *y, *z).to_cell(), Cell::new(*cell));
+        assert_eq!(
+            Tile::new(*x, *y, *z).to_cell().expect("cell index"),
+            Cell::try_from(*cell).expect("cell index")
+        );
     }
 
     // Cell to tile conversion
     for (x, y, z, cell) in cases.iter() {
-        assert_eq!(Cell::new(*cell).to_tile(), Tile::new(*x, *y, *z));
+        assert_eq!(
+            Cell::try_from(*cell).expect("cell index").to_tile(),
+            Tile::new(*x, *y, *z)
+        );
     }
 }
 
@@ -76,7 +60,10 @@ fn test_point_to_cell() {
     ];
 
     for (x, y, res, cell) in cases.iter() {
-        assert_eq!(Cell::from_point(*y, *x, *res), Cell::new(*cell));
+        assert_eq!(
+            Cell::from_point(*y, *x, *res).expect("cell index"),
+            Cell::try_from(*cell).expect("cell index")
+        );
     }
 }
 
@@ -85,7 +72,9 @@ fn test_point_to_cell() {
 fn test_cell_to_bbox() {
     // Conversion works
     assert_eq!(
-        Cell::new(5209574053332910079).to_bbox(),
+        Cell::try_from(5209574053332910079)
+            .expect("cell index")
+            .to_bbox(),
         [22.5, -21.943045533438166, 45.0, 0.0]
     );
 
@@ -98,7 +87,7 @@ fn test_cell_to_bbox() {
     ];
 
     for i in cases.iter() {
-        let bbox = Cell::new(*i).to_bbox();
+        let bbox = Cell::try_from(*i).expect("cell index").to_bbox();
         assert!(bbox[0] < bbox[2]);
         assert!(bbox[1] < bbox[3]);
     }
@@ -108,11 +97,15 @@ fn test_cell_to_bbox() {
 #[test]
 fn test_cell_to_point() {
     assert_eq!(
-        Cell::new(5209574053332910079_u64).to_point(),
+        Cell::try_from(5209574053332910079_u64)
+            .expect("cell index")
+            .to_point(),
         [-11.178401873711776, 33.75]
     );
 
-    let coords = Cell::new(5309133744805926483_u64).to_point();
+    let coords = Cell::try_from(5309133744805926483_u64)
+        .expect("cell index")
+        .to_point();
     assert_relative_eq!(coords[0], -41.28303708488909, epsilon = 1e-6);
     assert_relative_eq!(coords[1], 174.77727502584457, epsilon = 1e-6)
 }
@@ -120,7 +113,7 @@ fn test_cell_to_point() {
 // Get cell resolution
 #[test]
 fn test_get_cell_resolution() {
-    let qb_cell = Cell::new(5209574053332910079_u64);
+    let qb_cell = Cell::try_from(5209574053332910079_u64).expect("cell index");
     assert_eq!(qb_cell.resolution(), 4_u8)
 }
 
@@ -133,93 +126,158 @@ fn test_cell_to_parent() {
     ];
 
     for (cell, res, parent) in cases.iter() {
-        assert_eq!(Cell::new(*cell).parent(*res), Cell::new(*parent));
+        assert_eq!(
+            Cell::try_from(*cell).expect("cell index").parent(*res),
+            Cell::try_from(*parent)
+        );
     }
 }
 #[test]
 #[should_panic(expected = "parent resolution should be greater than current resolution")]
 fn test_cell_to_parent_invalid_resolution() {
-    let cell = Cell::new(5209574053332910079);
+    let cell = Cell::try_from(5209574053332910079).expect("cell index");
     let _ = cell.parent(4);
 }
 
 // Estimate cell area
 #[test]
 fn test_cell_area() {
-    let area = Cell::new(5209574053332910079_u64).area_m2();
+    let area = Cell::try_from(5209574053332910079_u64)
+        .expect("cell index")
+        .area_m2();
     assert_relative_eq!(area, 6023040823252.664, epsilon = 1e-2);
 }
 
-// Find cell's neighbors
-// Identical to
-// https://github.com/CartoDB/quadbin-py/blob/39a0adbb238ff214fbbca7b73200cfebf2aef38c/tests/unit/test_main.py#L203
+// // Find cell's neighbors
+// // Identical to
+// // https://github.com/CartoDB/quadbin-py/blob/39a0adbb238ff214fbbca7b73200cfebf2aef38c/tests/unit/test_main.py#L203
+// #[test]
+// fn test_cell_neighbor() {
+//     assert_eq!(
+//         Cell::try_from(5192650370358181887)
+//             .expect("cell index")
+//             .neighbor(UP),
+//         None
+//     );
+//     assert_eq!(
+//         Cell::try_from(5193776270265024511)
+//             .expect("cell index")
+//             .neighbor(UP),
+//         None
+//     );
+//     assert_eq!(
+//         Cell::try_from(5194902170171867135)
+//             .expect("cell index")
+//             .neighbor(UP),
+//         None
+//     );
+//     assert_eq!(
+//         Cell::try_from(5194902170171867135)
+//             .expect("cell index")
+//             .neighbor(RIGHT),
+//         None
+//     );
+
+//     // Resolution 1
+//     assert_eq!(
+//         Cell::try_from(5193776270265024511)
+//             .expect("cell index")
+//             .neighbor(DOWN),
+//         Some(Cell::try_from(5196028070078709759).expect("cell index"))
+//     );
+//     assert_eq!(
+//         Cell::try_from(5193776270265024511)
+//             .expect("cell index")
+//             .neighbor(RIGHT),
+//         Some(Cell::try_from(5194902170171867135).expect("cell index"))
+//     );
+//     assert_eq!(
+//         Cell::try_from(5194902170171867135)
+//             .expect("cell index")
+//             .neighbor(DOWN),
+//         Some(Cell::try_from(5197153969985552383).expect("cell index"))
+//     );
+//     assert_eq!(
+//         Cell::try_from(5194902170171867135)
+//             .expect("cell index")
+//             .neighbor(LEFT),
+//         Some(Cell::try_from(5193776270265024511).expect("cell index"))
+//     );
+//     assert_eq!(
+//         Cell::try_from(5209574053332910079)
+//             .expect("cell index")
+//             .neighbor(UP),
+//         Some(Cell::try_from(5208061125333090303).expect("cell index"))
+//     );
+
+//     // Resolution 4
+//     assert_eq!(
+//         Cell::try_from(5209574053332910079)
+//             .expect("cell index")
+//             .neighbor(DOWN),
+//         Some(Cell::try_from(5209609237704998911).expect("cell index"))
+//     );
+//     assert_eq!(
+//         Cell::try_from(5209574053332910079)
+//             .expect("cell index")
+//             .neighbor(LEFT),
+//         Some(Cell::try_from(5209556461146865663).expect("cell index"))
+//     );
+//     assert_eq!(
+//         Cell::try_from(5209574053332910079)
+//             .expect("cell index")
+//             .neighbor(RIGHT),
+//         Some(Cell::try_from(5209626829891043327).expect("cell index"))
+//     );
+// }
+
+// // List all Cell's neighbors
+// #[test]
+// fn test_cell_neighbors() {
+//     let center_cells = [
+//         Cell::try_from(5209574053332910079).expect("cell index"),
+//         Cell::try_from(5194902170171867135).expect("cell index"),
+//         Cell::try_from(5192650370358181887).expect("cell index"),
+//         Cell::try_from(5201094619659501567).expect("cell index"),
+//     ];
+
+//     for i in center_cells.iter() {
+//         assert_eq!(
+//             i.neighbors(),
+//             [
+//                 i.neighbor(UP),
+//                 i.neighbor(RIGHT),
+//                 i.neighbor(LEFT),
+//                 i.neighbor(DOWN)
+//             ]
+//         )
+//     }
+
+//     // Test that None is returned alongside with Some(Cell)
+//     let nn = Cell::try_from(5201094619659501567)
+//         .expect("cell index")
+//         .neighbors();
+//     assert_eq!(nn[1], None)
+// }
+
 #[test]
-fn test_cell_neighbor() {
-    assert_eq!(Cell::new(5192650370358181887).neighbor(UP), None);
-    assert_eq!(Cell::new(5193776270265024511).neighbor(UP), None);
-    assert_eq!(Cell::new(5194902170171867135).neighbor(UP), None);
-    assert_eq!(Cell::new(5194902170171867135).neighbor(RIGHT), None);
-
-    // Resolution 1
-    assert_eq!(
-        Cell::new(5193776270265024511).neighbor(DOWN),
-        Some(Cell::new(5196028070078709759))
+fn test_invalid_cellindex() {
+    assert!(
+        !InvalidCell::new(Some(5209574053332910078_u64), "error")
+            .to_string()
+            .is_empty()
     );
     assert_eq!(
-        Cell::new(5193776270265024511).neighbor(RIGHT),
-        Some(Cell::new(5194902170171867135))
+        Cell::try_from(5209574053332910078_u64).err(),
+        Some(InvalidCell::new(
+            Some(5209574053332910078_u64),
+            "Provided Quadbin Cell index is invalid"
+        ))
     );
     assert_eq!(
-        Cell::new(5194902170171867135).neighbor(DOWN),
-        Some(Cell::new(5197153969985552383))
+        Cell::try_from(5209574053332910079_u64)
+            .expect("cell index")
+            .get(),
+        5209574053332910079_u64
     );
-    assert_eq!(
-        Cell::new(5194902170171867135).neighbor(LEFT),
-        Some(Cell::new(5193776270265024511))
-    );
-    assert_eq!(
-        Cell::new(5209574053332910079).neighbor(UP),
-        Some(Cell::new(5208061125333090303))
-    );
-
-    // Resolution 4
-    assert_eq!(
-        Cell::new(5209574053332910079).neighbor(DOWN),
-        Some(Cell::new(5209609237704998911))
-    );
-    assert_eq!(
-        Cell::new(5209574053332910079).neighbor(LEFT),
-        Some(Cell::new(5209556461146865663))
-    );
-    assert_eq!(
-        Cell::new(5209574053332910079).neighbor(RIGHT),
-        Some(Cell::new(5209626829891043327))
-    );
-}
-
-// List all Cell's neighbors
-#[test]
-fn test_cell_neighbors() {
-    let center_cells = [
-        Cell::new(5209574053332910079),
-        Cell::new(5194902170171867135),
-        Cell::new(5192650370358181887),
-        Cell::new(5201094619659501567),
-    ];
-
-    for i in center_cells.iter() {
-        assert_eq!(
-            i.neighbors(),
-            [
-                i.neighbor(UP),
-                i.neighbor(RIGHT),
-                i.neighbor(LEFT),
-                i.neighbor(DOWN)
-            ]
-        )
-    }
-
-    // Test that None is returned alongside with Some(Cell)
-    let nn = Cell::new(5201094619659501567).neighbors();
-    assert_eq!(nn[1], None)
 }

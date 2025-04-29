@@ -1,5 +1,6 @@
 use crate::Direction;
 use crate::cells::*;
+use crate::errors::InvalidCell;
 use crate::utils::*;
 
 /// A single tile coordinates
@@ -19,7 +20,7 @@ impl Tile {
     }
 
     /// Convert to Quadbin cell.
-    pub fn to_cell(self) -> Cell {
+    pub fn to_cell(self) -> Result<Cell, InvalidCell> {
         tile_to_cell(self)
     }
 

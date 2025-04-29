@@ -14,7 +14,7 @@ pub fn bench(c: &mut Criterion) {
         b.iter(|| black_box(&index))
     });
     group.bench_function("qbin", |b| {
-        let index = Cell::from_point(LAT, LNG, 12);
+        let index = Cell::from_point(LAT, LNG, 12).expect("cell index");
         b.iter(|| black_box(&index))
     });
 

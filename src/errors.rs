@@ -45,3 +45,4 @@ macro_rules! invalid_value_error {
 }
 
 invalid_value_error!("direction", InvalidDirection, u8);
+invalid_value_error!("cell index", InvalidCell, Option<u64>);
