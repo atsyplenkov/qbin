@@ -55,7 +55,11 @@ impl Cell {
     ///
     /// # Example
     /// ```
-    /// let qb_cell = qbin::Cell::new(5234261499580514303);
+    /// use qbin::Cell;
+    /// 
+    /// let cell_new = Cell::new(5234261499580514303);
+    /// let cell_try = Cell::try_from(5234261499580514303).expect("cell index");
+    /// assert_eq!(cell_new, cell_try);
     /// ```
     pub fn new(value: u64) -> Self {
         Cell::try_from(value).expect("cell index")
@@ -65,7 +69,9 @@ impl Cell {
     ///
     /// # Example
     /// ```
-    /// let qb_cell = qbin::Cell::try_from(5234261499580514303).expect("cell index");
+    /// use qbin::Cell;
+    ///
+    /// let qb_cell = Cell::try_from(5234261499580514303).expect("cell index");
     /// let res = qb_cell.resolution();
     /// assert_eq!(res, 10)
     /// ```
@@ -81,7 +87,7 @@ impl Cell {
     ///
     /// let qb_cell = Cell::try_from(5209574053332910079).expect("cell index");
     /// let parent = qb_cell.parent(2_u8).expect("cell index");
-    /// assert_eq!(parent, qbin::Cell::try_from(5200813144682790911).expect("cell index"))
+    /// assert_eq!(parent, Cell::try_from(5200813144682790911).expect("cell index"))
     /// ```
     // TODO:
     // Return Option<Self> as in neighbor
