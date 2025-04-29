@@ -56,7 +56,7 @@ impl Cell {
     /// # Example
     /// ```
     /// use qbin::Cell;
-    /// 
+    ///
     /// let cell_new = Cell::new(5234261499580514303);
     /// let cell_try = Cell::try_from(5234261499580514303).expect("cell index");
     /// assert_eq!(cell_new, cell_try);
@@ -89,8 +89,6 @@ impl Cell {
     /// let parent = qb_cell.parent(2_u8).expect("cell index");
     /// assert_eq!(parent, Cell::try_from(5200813144682790911).expect("cell index"))
     /// ```
-    // TODO:
-    // Return Option<Self> as in neighbor
     pub fn parent(&self, parent_res: u8) -> Result<Self, InvalidCell> {
         cell_to_parent(self, parent_res)
     }
