@@ -24,14 +24,35 @@ fn test_invalid_cellindex() {
 }
 
 #[test]
-fn test_parent_resolution() {
-    let cell = Cell::new(5209574053332910079);
-    let message = cell.parent(26).err();
+fn test_cell_to_parent_invalid_resolution() {
+    let cell = Cell::try_from(5209574053332910079).expect("cell index");
+    let result = cell.parent(4);
+
+    assert!(result.is_err());
+
     assert_eq!(
-        message,
+        result.err(),
         Some(QuadbinError::InvalidResolution(InvalidResolution::new(
-            26,
+            4,
             "Parent resolution should be lower than the current resolution"
         )))
     );
+}
+
+#[test]
+fn test_invalid_cell_index() {
+    let val: [u64; 2] = [5209574053332910078, 6362495557939757055];
+
+    for i in val.iter() {
+        let cell = Cell::try_from(*i);
+        assert!(cell.is_err());
+
+        assert_eq!(
+            cell.err(),
+            Some(QuadbinError::InvalidCell(InvalidCell::new(
+                Some(*i),
+                "Provided Quadbin Cell index is invalid"
+            )))
+        );
+    }
 }
