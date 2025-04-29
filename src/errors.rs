@@ -48,3 +48,6 @@ invalid_value_error!("direction", InvalidDirection, u8);
 invalid_value_error!("cell index", InvalidCell, Option<u64>);
 invalid_value_error!("resolution", InvalidResolution, u8);
 invalid_value_error!("offset", InvalidOffset, f64);
+
+// TODO:
+// Add Error enum
