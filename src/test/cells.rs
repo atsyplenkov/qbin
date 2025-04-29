@@ -131,7 +131,7 @@ fn test_cell_to_parent() {
     }
 }
 #[test]
-#[should_panic(expected = "parent resolution should be greater than current resolution")]
+#[should_panic(expected = "parent resolution should be lower than current resolution")]
 fn test_cell_to_parent_invalid_resolution() {
     let cell = Cell::try_from(5209574053332910079).expect("cell index");
     let _ = cell.parent(4);
