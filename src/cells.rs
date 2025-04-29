@@ -28,6 +28,21 @@ use core::{fmt, num::NonZeroU64};
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub struct Cell(NonZeroU64);
 
+impl TryFrom<u64> for Cell {
+    type Error = errors::InvalidCell;
+
+    fn try_from(value: u64) -> Result<Self, Self::Error> {
+        if !is_valid_cell(value) {
+            return Err(Self::Error::new(
+                Some(value),
+                "Provided Quadbin Cell index is invalid",
+            ));
+        }
+
+        Ok(Self(NonZeroU64::new(value).expect("non-zero cell index")))
+    }
+}
+
 impl Cell {
     /// Returns the inner u64 value of the cell.
     pub fn get(&self) -> u64 {
@@ -224,21 +239,6 @@ impl fmt::Display for Cell {
     }
 }
 
-impl TryFrom<u64> for Cell {
-    type Error = errors::InvalidCell;
-
-    fn try_from(value: u64) -> Result<Self, Self::Error> {
-        if !is_valid_cell(value) {
-            return Err(Self::Error::new(
-                Some(value),
-                "Provided Quadbin Cell index is invalid",
-            ));
-        }
-
-        Ok(Self(NonZeroU64::new(value).expect("non-zero cell index")))
-    }
-}
-
 // TODO:
 // Detect direction from neighbor https://github.com/HydroniumLabs/h3o/blob/ad2bebf52eab218d66b0bf213b14a2802bf616f7/src/base_cell.rs#L135C1-L150C6
 
@@ -346,7 +346,7 @@ fn cell_to_parent(cell: &Cell, parent_res: u8) -> Result<Cell, InvalidCell> {
     let resolution = cell.resolution();
     assert!(
         parent_res < resolution,
-        "parent resolution should be greater than current resolution"
+        "parent resolution should be lower than current resolution"
     );
 
     let result = (cell.get() & !(0x1F << 52))
