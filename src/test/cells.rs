@@ -72,9 +72,7 @@ fn test_point_to_cell() {
 fn test_cell_to_bbox() {
     // Conversion works
     assert_eq!(
-        Cell::try_from(5209574053332910079)
-            .expect("cell index")
-            .to_bbox(),
+        Cell::try_from(5209574053332910079).unwrap().to_bbox(),
         [22.5, -21.943045533438166, 45.0, 0.0]
     );
 
@@ -87,7 +85,7 @@ fn test_cell_to_bbox() {
     ];
 
     for i in cases.iter() {
-        let bbox = Cell::try_from(*i).expect("cell index").to_bbox();
+        let bbox = Cell::try_from(*i).unwrap().to_bbox();
         assert!(bbox[0] < bbox[2]);
         assert!(bbox[1] < bbox[3]);
     }
@@ -148,117 +146,111 @@ fn test_cell_area() {
     assert_relative_eq!(area, 6023040823252.664, epsilon = 1e-2);
 }
 
-// // Find cell's neighbors
-// // Identical to
-// // https://github.com/CartoDB/quadbin-py/blob/39a0adbb238ff214fbbca7b73200cfebf2aef38c/tests/unit/test_main.py#L203
-// #[test]
-// fn test_cell_neighbor() {
-//     assert_eq!(
-//         Cell::try_from(5192650370358181887)
-//             .expect("cell index")
-//             .neighbor(UP),
-//         None
-//     );
-//     assert_eq!(
-//         Cell::try_from(5193776270265024511)
-//             .expect("cell index")
-//             .neighbor(UP),
-//         None
-//     );
-//     assert_eq!(
-//         Cell::try_from(5194902170171867135)
-//             .expect("cell index")
-//             .neighbor(UP),
-//         None
-//     );
-//     assert_eq!(
-//         Cell::try_from(5194902170171867135)
-//             .expect("cell index")
-//             .neighbor(RIGHT),
-//         None
-//     );
+// Find cell's neighbors
+// Identical to
+// https://github.com/CartoDB/quadbin-py/blob/39a0adbb238ff214fbbca7b73200cfebf2aef38c/tests/unit/test_main.py#L203
+#[test]
+fn test_cell_neighbor() {
+    assert_eq!(
+        Cell::try_from(5192650370358181887)
+            .expect("cell index")
+            .neighbor(UP),
+        None
+    );
+    assert_eq!(
+        Cell::try_from(5193776270265024511)
+            .expect("cell index")
+            .neighbor(UP),
+        None
+    );
+    assert_eq!(
+        Cell::try_from(5194902170171867135)
+            .expect("cell index")
+            .neighbor(UP),
+        None
+    );
+    assert_eq!(
+        Cell::try_from(5194902170171867135)
+            .expect("cell index")
+            .neighbor(RIGHT),
+        None
+    );
 
-//     // Resolution 1
-//     assert_eq!(
-//         Cell::try_from(5193776270265024511)
-//             .expect("cell index")
-//             .neighbor(DOWN),
-//         Some(Cell::try_from(5196028070078709759).expect("cell index"))
-//     );
-//     assert_eq!(
-//         Cell::try_from(5193776270265024511)
-//             .expect("cell index")
-//             .neighbor(RIGHT),
-//         Some(Cell::try_from(5194902170171867135).expect("cell index"))
-//     );
-//     assert_eq!(
-//         Cell::try_from(5194902170171867135)
-//             .expect("cell index")
-//             .neighbor(DOWN),
-//         Some(Cell::try_from(5197153969985552383).expect("cell index"))
-//     );
-//     assert_eq!(
-//         Cell::try_from(5194902170171867135)
-//             .expect("cell index")
-//             .neighbor(LEFT),
-//         Some(Cell::try_from(5193776270265024511).expect("cell index"))
-//     );
-//     assert_eq!(
-//         Cell::try_from(5209574053332910079)
-//             .expect("cell index")
-//             .neighbor(UP),
-//         Some(Cell::try_from(5208061125333090303).expect("cell index"))
-//     );
+    // Resolution 1
+    assert_eq!(
+        Cell::try_from(5193776270265024511)
+            .expect("cell index")
+            .neighbor(DOWN),
+        Some(Cell::try_from(5196028070078709759).expect("cell index"))
+    );
+    assert_eq!(
+        Cell::try_from(5193776270265024511)
+            .expect("cell index")
+            .neighbor(RIGHT),
+        Some(Cell::new(5194902170171867135))
+    );
+    assert_eq!(
+        Cell::try_from(5194902170171867135)
+            .expect("cell index")
+            .neighbor(DOWN),
+        Some(Cell::new(5197153969985552383))
+    );
+    assert_eq!(
+        Cell::try_from(5194902170171867135)
+            .expect("cell index")
+            .neighbor(LEFT),
+        Some(Cell::new(5193776270265024511))
+    );
+    assert_eq!(
+        Cell::try_from(5209574053332910079)
+            .expect("cell index")
+            .neighbor(UP),
+        Some(Cell::new(5208061125333090303))
+    );
 
-//     // Resolution 4
-//     assert_eq!(
-//         Cell::try_from(5209574053332910079)
-//             .expect("cell index")
-//             .neighbor(DOWN),
-//         Some(Cell::try_from(5209609237704998911).expect("cell index"))
-//     );
-//     assert_eq!(
-//         Cell::try_from(5209574053332910079)
-//             .expect("cell index")
-//             .neighbor(LEFT),
-//         Some(Cell::try_from(5209556461146865663).expect("cell index"))
-//     );
-//     assert_eq!(
-//         Cell::try_from(5209574053332910079)
-//             .expect("cell index")
-//             .neighbor(RIGHT),
-//         Some(Cell::try_from(5209626829891043327).expect("cell index"))
-//     );
-// }
+    // Resolution 4
+    assert_eq!(
+        Cell::new(5209574053332910079).neighbor(DOWN),
+        Some(Cell::new(5209609237704998911))
+    );
+    assert_eq!(
+        Cell::new(5209574053332910079).neighbor(LEFT),
+        Some(Cell::new(5209556461146865663))
+    );
+    assert_eq!(
+        Cell::new(5209574053332910079).neighbor(RIGHT),
+        Some(Cell::new(5209626829891043327))
+    );
+}
 
-// // List all Cell's neighbors
-// #[test]
-// fn test_cell_neighbors() {
-//     let center_cells = [
-//         Cell::try_from(5209574053332910079).expect("cell index"),
-//         Cell::try_from(5194902170171867135).expect("cell index"),
-//         Cell::try_from(5192650370358181887).expect("cell index"),
-//         Cell::try_from(5201094619659501567).expect("cell index"),
-//     ];
+// List all Cell's neighbors
+#[test]
+fn test_cell_neighbors() {
+    let center_cells = [
+        Cell::try_from(5209574053332910079).expect("cell index"),
+        Cell::try_from(5194902170171867135).expect("cell index"),
+        Cell::try_from(5192650370358181887).expect("cell index"),
+        Cell::try_from(5201094619659501567).expect("cell index"),
+    ];
 
-//     for i in center_cells.iter() {
-//         assert_eq!(
-//             i.neighbors(),
-//             [
-//                 i.neighbor(UP),
-//                 i.neighbor(RIGHT),
-//                 i.neighbor(LEFT),
-//                 i.neighbor(DOWN)
-//             ]
-//         )
-//     }
+    for i in center_cells.iter() {
+        assert_eq!(
+            i.neighbors(),
+            [
+                i.neighbor(UP),
+                i.neighbor(RIGHT),
+                i.neighbor(LEFT),
+                i.neighbor(DOWN)
+            ]
+        )
+    }
 
-//     // Test that None is returned alongside with Some(Cell)
-//     let nn = Cell::try_from(5201094619659501567)
-//         .expect("cell index")
-//         .neighbors();
-//     assert_eq!(nn[1], None)
-// }
+    // Test that None is returned alongside with Some(Cell)
+    let nn = Cell::try_from(5201094619659501567)
+        .expect("cell index")
+        .neighbors();
+    assert_eq!(nn[1], None)
+}
 
 #[test]
 fn test_invalid_cellindex() {
