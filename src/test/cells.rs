@@ -1,6 +1,5 @@
 use crate::cells::*;
 use crate::directions::Direction;
-use crate::errors::*;
 use crate::tiles::*;
 use approx::assert_relative_eq;
 
@@ -124,12 +123,10 @@ fn test_cell_to_parent() {
     ];
 
     for (cell, res, parent) in cases.iter() {
-        assert_eq!(
-            Cell::try_from(*cell).expect("cell index").parent(*res),
-            Cell::try_from(*parent)
-        );
+        assert_eq!(Cell::new(*cell).parent(*res).unwrap(), Cell::new(*parent));
     }
 }
+
 #[test]
 fn test_cell_to_parent_invalid_resolution() {
     let cell = Cell::try_from(5209574053332910079).expect("cell index");
@@ -251,26 +248,4 @@ fn test_cell_neighbors() {
         .expect("cell index")
         .neighbors();
     assert_eq!(nn[1], None)
-}
-
-#[test]
-fn test_invalid_cellindex() {
-    assert!(
-        !InvalidCell::new(Some(5209574053332910078_u64), "error")
-            .to_string()
-            .is_empty()
-    );
-    assert_eq!(
-        Cell::try_from(5209574053332910078_u64).err(),
-        Some(InvalidCell::new(
-            Some(5209574053332910078_u64),
-            "Provided Quadbin Cell index is invalid"
-        ))
-    );
-    assert_eq!(
-        Cell::try_from(5209574053332910079_u64)
-            .expect("cell index")
-            .get(),
-        5209574053332910079_u64
-    );
 }

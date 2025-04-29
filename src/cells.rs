@@ -1,7 +1,7 @@
 use crate::Direction;
 use crate::constants::*;
 use crate::errors;
-use crate::errors::InvalidCell;
+use crate::errors::*;
 use crate::tiles::*;
 use crate::utils::*;
 use core::{fmt, num::NonZeroU64};
@@ -29,14 +29,14 @@ use core::{fmt, num::NonZeroU64};
 pub struct Cell(NonZeroU64);
 
 impl TryFrom<u64> for Cell {
-    type Error = errors::InvalidCell;
+    type Error = errors::QuadbinError;
 
-    fn try_from(value: u64) -> Result<Self, Self::Error> {
+    fn try_from(value: u64) -> Result<Self, QuadbinError> {
         if !is_valid_cell(value) {
-            return Err(Self::Error::new(
+            return Err(QuadbinError::InvalidCell(InvalidCell::new(
                 Some(value),
                 "Provided Quadbin Cell index is invalid",
-            ));
+            )));
         }
 
         Ok(Self(NonZeroU64::new(value).expect("non-zero cell index")))
@@ -89,7 +89,7 @@ impl Cell {
     /// let parent = qb_cell.parent(2_u8).expect("cell index");
     /// assert_eq!(parent, Cell::try_from(5200813144682790911).expect("cell index"))
     /// ```
-    pub fn parent(&self, parent_res: u8) -> Result<Self, InvalidCell> {
+    pub fn parent(&self, parent_res: u8) -> Result<Self, QuadbinError> {
         cell_to_parent(self, parent_res)
     }
 
@@ -227,7 +227,7 @@ impl Cell {
     /// let cell = Cell::from_point(-41.28303675124842, 174.77727344223067, 26).expect("cell index");
     /// assert_eq!(cell.get(), 5309133744805926483_u64)
     /// ```
-    pub fn from_point(lat: f64, lng: f64, res: u8) -> Result<Self, InvalidCell> {
+    pub fn from_point(lat: f64, lng: f64, res: u8) -> Result<Self, QuadbinError> {
         point_to_cell(lat, lng, res)
     }
 
@@ -264,7 +264,7 @@ fn is_valid_cell(cell64: u64) -> bool {
 }
 
 /// Convert a tile into a Quadbin cell.
-pub(crate) fn tile_to_cell(tile: Tile) -> Result<Cell, InvalidCell> {
+pub(crate) fn tile_to_cell(tile: Tile) -> Result<Cell, QuadbinError> {
     let mut x = tile.x as u64;
     let mut y = tile.y as u64;
     let z = tile.z as u64;
@@ -324,7 +324,7 @@ fn cell_to_tile(cell: &Cell) -> Tile {
 }
 
 /// Convert a geographic point into a cell.
-fn point_to_cell(lat: f64, lng: f64, res: u8) -> Result<Cell, InvalidCell> {
+fn point_to_cell(lat: f64, lng: f64, res: u8) -> Result<Cell, QuadbinError> {
     let lng = clip_longitude(lng);
     let lat = clip_latitude(lat);
 
@@ -345,14 +345,14 @@ fn cell_to_point(cell: &Cell) -> [f64; 2] {
 }
 
 /// Compute the parent cell for a specific resolution.
-fn cell_to_parent(cell: &Cell, parent_res: u8) -> Result<Cell, InvalidCell> {
+fn cell_to_parent(cell: &Cell, parent_res: u8) -> Result<Cell, QuadbinError> {
     // Check resolution
     let resolution = cell.resolution();
     if parent_res >= resolution {
-        return Err(InvalidCell::new(
-            Some(cell.get()),
+        return Err(QuadbinError::InvalidResolution(InvalidResolution::new(
+            parent_res,
             "Parent resolution should be lower than the current resolution",
-        ));
+        )));
     }
 
     let result = (cell.get() & !(0x1F << 52))

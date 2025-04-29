@@ -1,6 +1,6 @@
 use crate::constants::*;
 use crate::directions::Direction;
-use crate::errors::{InvalidOffset, InvalidResolution};
+use crate::errors::{InvalidOffset, InvalidResolution, QuadbinError};
 use crate::tiles::Tile;
 use std::f64::consts::PI;
 
@@ -25,13 +25,13 @@ pub(crate) fn point_to_tile_fraction(
     lat: f64,
     lng: f64,
     res: u8,
-) -> Result<(f64, f64, u8), InvalidResolution> {
+) -> Result<(f64, f64, u8), QuadbinError> {
     // Check resolution to avoid overflow
     if res > MAX_RESOLUTION {
-        return Err(InvalidResolution::new(
+        return Err(QuadbinError::InvalidResolution(InvalidResolution::new(
             res,
             "Resolution should be between 0 and 26",
-        ));
+        )));
     }
 
     // Compute tile coordinates
@@ -57,13 +57,13 @@ pub(crate) fn point_to_tile(lat: f64, lng: f64, res: u8) -> Tile {
 }
 
 /// Compute the latitude for a tile with an offset.
-pub(crate) fn tile_to_latitude(tile: &Tile, offset: f64) -> Result<f64, InvalidOffset> {
+pub(crate) fn tile_to_latitude(tile: &Tile, offset: f64) -> Result<f64, QuadbinError> {
     // Check if offset is between 0 and 1
     if !(0.0..=1.0).contains(&offset) {
-        return Err(InvalidOffset::new(
+        return Err(QuadbinError::InvalidOffset(InvalidOffset::new(
             offset,
             "Offset should be between 0.0 and 1.0",
-        ));
+        )));
     }
 
     // Get Tile coords
@@ -77,13 +77,13 @@ pub(crate) fn tile_to_latitude(tile: &Tile, offset: f64) -> Result<f64, InvalidO
 }
 
 /// Compute the longitude for a tile with an offset.
-pub(crate) fn tile_to_longitude(tile: &Tile, offset: f64) -> Result<f64, InvalidOffset> {
+pub(crate) fn tile_to_longitude(tile: &Tile, offset: f64) -> Result<f64, QuadbinError> {
     // Check if offset is between 0 and 1
     if !(0.0..=1.0).contains(&offset) {
-        return Err(InvalidOffset::new(
+        return Err(QuadbinError::InvalidOffset(InvalidOffset::new(
             offset,
             "Offset should be between 0.0 and 1.0",
-        ));
+        )));
     }
 
     // Get Tile coords
