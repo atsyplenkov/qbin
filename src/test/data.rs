@@ -1,10 +1,7 @@
 // Adapted from
 // https://github.com/georust/wkb/blob/main/src/test/data.rs
 
-use geo::{
-    Geometry, GeometryCollection, LineString, MultiLineString, MultiPoint, MultiPolygon, Point,
-    Polygon, line_string, point, polygon,
-};
+use geo::{MultiPoint, Point, point};
 
 pub(super) fn point_2d() -> Point {
     point!(
