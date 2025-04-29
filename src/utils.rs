@@ -1,5 +1,6 @@
 use crate::constants::*;
 use crate::directions::Direction;
+use crate::errors::{InvalidOffset, InvalidResolution, QuadbinError};
 use crate::tiles::Tile;
 use std::f64::consts::PI;
 
@@ -20,12 +21,18 @@ pub(crate) fn clip_latitude(lat: f64) -> f64 {
 
 /// Compute the tile in fractions for a longitude and latitude in a
 /// specific resolution.
-pub(crate) fn point_to_tile_fraction(lat: f64, lng: f64, res: u8) -> (f64, f64, u8) {
+pub(crate) fn point_to_tile_fraction(
+    lat: f64,
+    lng: f64,
+    res: u8,
+) -> Result<(f64, f64, u8), QuadbinError> {
     // Check resolution to avoid overflow
-    assert!(
-        (res <= MAX_RESOLUTION),
-        "Resolution should be between 0 and 26"
-    );
+    if res > MAX_RESOLUTION {
+        return Err(QuadbinError::InvalidResolution(InvalidResolution::new(
+            res,
+            "Resolution should be between 0 and 26",
+        )));
+    }
 
     // Compute tile coordinates
     let z2: f64 = (1 << res) as f64;
@@ -38,24 +45,26 @@ pub(crate) fn point_to_tile_fraction(lat: f64, lng: f64, res: u8) -> (f64, f64, 
     let x = if x < 0.0 { x + z2 } else { x };
 
     // Return the tile coordinates
-    (x, y, res)
+    Ok((x, y, res))
 }
 
 /// Compute the tile for a longitude and latitude in a specific resolution.
 pub(crate) fn point_to_tile(lat: f64, lng: f64, res: u8) -> Tile {
-    let (x, y, z) = point_to_tile_fraction(lat, lng, res);
+    let (x, y, z) = point_to_tile_fraction(lat, lng, res).expect("resolution");
     let x: u32 = x.floor() as u32;
     let y: u32 = y.floor() as u32;
     Tile::new(x, y, z)
 }
 
 /// Compute the latitude for a tile with an offset.
-pub(crate) fn tile_to_latitude(tile: &Tile, offset: f64) -> f64 {
+pub(crate) fn tile_to_latitude(tile: &Tile, offset: f64) -> Result<f64, QuadbinError> {
     // Check if offset is between 0 and 1
-    assert!(
-        (0.0..=1.0).contains(&offset),
-        "Offset should be between 0 and 1"
-    );
+    if !(0.0..=1.0).contains(&offset) {
+        return Err(QuadbinError::InvalidOffset(InvalidOffset::new(
+            offset,
+            "Offset should be between 0.0 and 1.0",
+        )));
+    }
 
     // Get Tile coords
     let y = tile.y as f64;
@@ -63,23 +72,26 @@ pub(crate) fn tile_to_latitude(tile: &Tile, offset: f64) -> f64 {
 
     // Compute latitude
     let expy = f64::exp(-(2.0 * (y + offset) / z2 - 1.0) * PI);
-    360.0 * (f64::atan(expy) / PI - 0.25)
+    let lat = 360.0 * (f64::atan(expy) / PI - 0.25);
+    Ok(lat)
 }
 
 /// Compute the longitude for a tile with an offset.
-pub(crate) fn tile_to_longitude(tile: &Tile, offset: f64) -> f64 {
+pub(crate) fn tile_to_longitude(tile: &Tile, offset: f64) -> Result<f64, QuadbinError> {
     // Check if offset is between 0 and 1
-    assert!(
-        (0.0..=1.0).contains(&offset),
-        "Offset should be between 0 and 1"
-    );
+    if !(0.0..=1.0).contains(&offset) {
+        return Err(QuadbinError::InvalidOffset(InvalidOffset::new(
+            offset,
+            "Offset should be between 0.0 and 1.0",
+        )));
+    }
 
     // Get Tile coords
     let x = tile.x as f64;
     let z2 = (1 << tile.z) as f64;
 
     // Compute longitude
-    180.0 * (2.0 * (x + offset) / z2 - 1.0)
+    Ok(180.0 * (2.0 * (x + offset) / z2 - 1.0))
 }
 
 /// Inverse of the scale factor at the tile center.

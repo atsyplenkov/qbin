@@ -1,7 +1,7 @@
 #![doc = include_str!("../README.md")]
 
 // Quadbin cell itself
-pub mod cells;
+mod cells;
 pub use crate::cells::Cell;
 
 // Direction struct
