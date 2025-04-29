@@ -10,7 +10,8 @@ const ACC: f64 = 1e-10;
 // See https://github.com/CartoDB/quadbin-py/blob/master/tests/unit/test_utils.py
 #[test]
 fn test_point_to_tile_fraction() {
-    let tile = point_to_tile_fraction(41.26000108568697_f64, -95.93965530395508_f64, 9_u8);
+    let tile = point_to_tile_fraction(41.26000108568697_f64, -95.93965530395508_f64, 9_u8)
+        .expect("resolution");
     assert_relative_eq!(tile.0, 119.552490234375_f64, epsilon = ACC);
     assert_relative_eq!(tile.1, 191.47119140625_f64, epsilon = ACC);
     assert_eq!(tile.2, 9_u8);
@@ -69,16 +70,16 @@ fn test_tile_conversion() {
     assert_eq!(tile.z, 10_u8);
 
     // Convert back to coordinates
-    let new_lon = tile.to_longitude(0.0);
-    let new_lat = tile.to_latitude(0.0);
+    let new_lon = tile.to_longitude(0.0).expect("offset");
+    let new_lat = tile.to_latitude(0.0).expect("offset");
 
     // Check conversion with approximate equality
     assert_relative_eq!(new_lat, 45.08903556483104_f64, epsilon = ACC);
     assert_relative_eq!(new_lon, lon, epsilon = ACC);
 
     // Check offset with approximate equality
-    let new_lon_offset = tile.to_longitude(0.5);
-    let new_lat_offset = tile.to_latitude(0.5);
+    let new_lon_offset = tile.to_longitude(0.5).expect("offset");
+    let new_lat_offset = tile.to_latitude(0.5).expect("offset");
     assert_relative_eq!(new_lat_offset, 44.96479793033102_f64, epsilon = ACC);
     assert_relative_eq!(new_lon_offset, -44.82421875_f64, epsilon = ACC);
 }

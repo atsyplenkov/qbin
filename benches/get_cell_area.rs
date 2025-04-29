@@ -54,7 +54,7 @@ pub fn bench(c: &mut Criterion) {
     // Benchmark each resolution for quadbin
     for (i, &qb_index) in QUADBINS.iter().enumerate() {
         group.bench_with_input(BenchmarkId::new("qbin", i), &qb_index, |b, &index| {
-            let cell = Cell::new(index);
+            let cell = Cell::try_from(index).expect("cell index");
             b.iter(|| black_box(cell).area_m2())
         });
     }

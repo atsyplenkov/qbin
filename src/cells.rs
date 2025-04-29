@@ -1,5 +1,7 @@
 use crate::Direction;
 use crate::constants::*;
+use crate::errors;
+use crate::errors::*;
 use crate::tiles::*;
 use crate::utils::*;
 use core::{fmt, num::NonZeroU64};
@@ -26,6 +28,21 @@ use core::{fmt, num::NonZeroU64};
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub struct Cell(NonZeroU64);
 
+impl TryFrom<u64> for Cell {
+    type Error = errors::QuadbinError;
+
+    fn try_from(value: u64) -> Result<Self, QuadbinError> {
+        if !is_valid_cell(value) {
+            return Err(QuadbinError::InvalidCell(InvalidCell::new(
+                Some(value),
+                "Provided Quadbin Cell index is invalid",
+            )));
+        }
+
+        Ok(Self(NonZeroU64::new(value).expect("non-zero cell index")))
+    }
+}
+
 impl Cell {
     /// Returns the inner u64 value of the cell.
     pub fn get(&self) -> u64 {
@@ -34,34 +51,27 @@ impl Cell {
 
     /// Create new Quadbin cell from index.
     ///
-    /// # Example
-    /// ```
-    /// let qb_cell = qbin::Cell::new(5234261499580514303);
-    /// ```
-    pub fn new(value: u64) -> Cell {
-        assert!(
-            is_valid_cell(value),
-            "Provided Quadbin Cell index is invalid"
-        );
-        Cell(NonZeroU64::new(value).expect("non-zero cell index"))
-    }
-
-    /// Quadbin cell index validation.
+    /// A shortcut for [Cell::try_from()].
     ///
     /// # Example
     /// ```
-    /// let qb_cell = qbin::Cell::new(5234261499580514303);
-    /// assert_eq!(qb_cell.is_valid(), true)
+    /// use qbin::Cell;
+    ///
+    /// let cell_new = Cell::new(5234261499580514303);
+    /// let cell_try = Cell::try_from(5234261499580514303).expect("cell index");
+    /// assert_eq!(cell_new, cell_try);
     /// ```
-    pub fn is_valid(&self) -> bool {
-        is_valid_cell(self.get())
+    pub fn new(value: u64) -> Self {
+        Cell::try_from(value).expect("cell index")
     }
 
     /// Returns the resolution of the cell index.
     ///
     /// # Example
     /// ```
-    /// let qb_cell = qbin::Cell::new(5234261499580514303);
+    /// use qbin::Cell;
+    ///
+    /// let qb_cell = Cell::try_from(5234261499580514303).expect("cell index");
     /// let res = qb_cell.resolution();
     /// assert_eq!(res, 10)
     /// ```
@@ -73,11 +83,13 @@ impl Cell {
     ///
     /// # Example
     /// ```
-    /// let qb_cell = qbin::Cell::new(5209574053332910079);
-    /// let parent = qb_cell.parent(2_u8);
-    /// assert_eq!(parent, qbin::Cell::new(5200813144682790911))
+    /// use qbin::Cell;
+    ///
+    /// let qb_cell = Cell::try_from(5209574053332910079).expect("cell index");
+    /// let parent = qb_cell.parent(2_u8).expect("cell index");
+    /// assert_eq!(parent, Cell::try_from(5200813144682790911).expect("cell index"))
     /// ```
-    pub fn parent(&self, parent_res: u8) -> Cell {
+    pub fn parent(&self, parent_res: u8) -> Result<Self, QuadbinError> {
         cell_to_parent(self, parent_res)
     }
 
@@ -92,24 +104,26 @@ impl Cell {
     ///
     /// See [Direction] for allowed arguments.
     ///
+    /// Return `None` if there is no neighbor in this [Direction].
+    ///
     /// # Example
     /// ```
     /// use qbin::{Cell, Direction};
     ///
-    /// let sibling = Cell::new(5209574053332910079).neighbor(Direction::Right);
+    /// let cell = Cell::try_from(5209574053332910079).expect("cell index");
+    /// let sibling = cell.neighbor(Direction::Right);
     /// assert_eq!(sibling, Some(Cell::new(5209626829891043327)));
     /// ```
     pub fn neighbor(&self, direction: Direction) -> Option<Self> {
-        let tile = self.to_tile().neighbor(direction);
-        tile.map(Tile::to_cell)
+        let tile = self.to_tile().neighbor(direction)?;
+        tile.to_cell().ok()
     }
 
     /// Find the Cell's sibling in a specific [Direction].
     ///
     /// See [Cell::neighbor].
     pub fn sibling(&self, direction: Direction) -> Option<Self> {
-        let tile = self.to_tile().neighbor(direction);
-        tile.map(Tile::to_cell)
+        self.neighbor(direction)
     }
 
     /// List all Cell's neighbors.
@@ -133,8 +147,10 @@ impl Cell {
     /// # Example
     /// ```
     /// use approx::assert_relative_eq;
+    /// use qbin::Cell;
     ///
-    /// let area = qbin::Cell::new(5234261499580514303_u64).area_m2();
+    /// let my_cell = Cell::try_from(5234261499580514303_u64).expect("cell index");
+    /// let area = my_cell.area_m2();
     /// assert_relative_eq!(area, 888546364.7859862, epsilon = 1e-6)
     ///
     /// ```
@@ -149,8 +165,10 @@ impl Cell {
     /// # Example
     /// ```
     /// use approx::assert_relative_eq;
+    /// use qbin::Cell;
     ///
-    /// let area = qbin::Cell::new(5234261499580514303_u64).area_km2();
+    /// let my_cell = Cell::try_from(5234261499580514303_u64).expect("cell index");
+    /// let area = my_cell.area_km2();
     /// assert_relative_eq!(area, 888.5463647859862, epsilon = 1e-6)
     ///
     /// ```
@@ -166,7 +184,8 @@ impl Cell {
     /// ```
     /// use qbin::Cell;
     ///
-    /// let coords = Cell::new(5209574053332910079_u64).to_point();
+    /// let cell = Cell::try_from(5209574053332910079).expect("cell index");
+    /// let coords = cell.to_point();
     /// assert_eq!(coords, [-11.178401873711776, 33.75]);
     /// ```
     ///
@@ -181,16 +200,19 @@ impl Cell {
     ///
     /// # Example
     /// ```
-    /// let bbox = qbin::Cell::new(5209574053332910079).to_bbox();
+    /// use qbin::Cell;
+    ///
+    /// let cell = Cell::try_from(5209574053332910079).expect("cell index");
+    /// let bbox = cell.to_bbox();
     /// assert_eq!( bbox, [22.5, -21.943045533438166, 45.0, 0.0])
     /// ```
     pub fn to_bbox(&self) -> [f64; 4] {
-        let tile = self.to_tile();
+        let tile = &self.to_tile();
 
-        let xmin = tile.to_longitude(0.0);
-        let xmax = tile.to_longitude(1.0);
-        let ymin = tile.to_latitude(1.0);
-        let ymax = tile.to_latitude(0.0);
+        let xmin = tile.to_longitude(0.0).expect("offset");
+        let xmax = tile.to_longitude(1.0).expect("offset");
+        let ymin = tile.to_latitude(1.0).expect("offset");
+        let ymax = tile.to_latitude(0.0).expect("offset");
 
         [xmin, ymin, xmax, ymax]
     }
@@ -200,10 +222,12 @@ impl Cell {
     /// # Example
     ///
     /// ```
-    /// let cell = qbin::Cell::from_point(-41.28303675124842, 174.77727344223067, 26);
+    /// use qbin::Cell;
+    ///
+    /// let cell = Cell::from_point(-41.28303675124842, 174.77727344223067, 26).expect("cell index");
     /// assert_eq!(cell.get(), 5309133744805926483_u64)
     /// ```
-    pub fn from_point(lat: f64, lng: f64, res: u8) -> Cell {
+    pub fn from_point(lat: f64, lng: f64, res: u8) -> Result<Self, QuadbinError> {
         point_to_cell(lat, lng, res)
     }
 
@@ -223,9 +247,8 @@ impl fmt::Display for Cell {
 // Detect direction from neighbor https://github.com/HydroniumLabs/h3o/blob/ad2bebf52eab218d66b0bf213b14a2802bf616f7/src/base_cell.rs#L135C1-L150C6
 
 // Internal functions ------------------------------------------------
-
 /// Quadbin cell validation
-pub(crate) fn is_valid_cell(cell64: u64) -> bool {
+fn is_valid_cell(cell64: u64) -> bool {
     let header = HEADER;
     let mode = (cell64 >> 59) & 7;
     let resolution = (cell64 >> 52) & 0x1F;
@@ -241,7 +264,7 @@ pub(crate) fn is_valid_cell(cell64: u64) -> bool {
 }
 
 /// Convert a tile into a Quadbin cell.
-pub(crate) fn tile_to_cell(tile: Tile) -> Cell {
+pub(crate) fn tile_to_cell(tile: Tile) -> Result<Cell, QuadbinError> {
     let mut x = tile.x as u64;
     let mut y = tile.y as u64;
     let z = tile.z as u64;
@@ -265,13 +288,11 @@ pub(crate) fn tile_to_cell(tile: Tile) -> Cell {
     y = (y | (y << S[0])) & B[0];
 
     let cell = HEADER | (1 << 59) | (z << 52) | ((x | (y << 1)) >> 12) | (FOOTER >> (z * 2));
-    Cell::new(cell)
+    Cell::try_from(cell)
 }
 
 /// Convert Quadbin cell into a tile
-pub(crate) fn cell_to_tile(cell: &Cell) -> Tile {
-    assert!(cell.is_valid(), "Quadbin cell index is not valid");
-
+fn cell_to_tile(cell: &Cell) -> Tile {
     let cell64 = cell.get();
     let z = (cell64 >> 52) & 31;
     let q = (cell64 & FOOTER) << 12;
@@ -303,7 +324,7 @@ pub(crate) fn cell_to_tile(cell: &Cell) -> Tile {
 }
 
 /// Convert a geographic point into a cell.
-pub(crate) fn point_to_cell(lat: f64, lng: f64, res: u8) -> Cell {
+fn point_to_cell(lat: f64, lng: f64, res: u8) -> Result<Cell, QuadbinError> {
     let lng = clip_longitude(lng);
     let lat = clip_latitude(lat);
 
@@ -313,12 +334,10 @@ pub(crate) fn point_to_cell(lat: f64, lng: f64, res: u8) -> Cell {
 }
 
 /// Convert cell into point
-pub(crate) fn cell_to_point(cell: &Cell) -> [f64; 2] {
-    assert!(cell.is_valid(), "Quadbin cell index is not valid");
-
+fn cell_to_point(cell: &Cell) -> [f64; 2] {
     let tile = cell.to_tile();
-    let lat = tile.to_latitude(0.5);
-    let lon = tile.to_longitude(0.5);
+    let lat = tile.to_latitude(0.5).expect("offset");
+    let lon = tile.to_longitude(0.5).expect("offset");
 
     // Return array, not tuple, as it more memory efficient
     // See https://doc.rust-lang.org/stable/book/ch03-02-data-types.html#the-array-type
@@ -326,17 +345,19 @@ pub(crate) fn cell_to_point(cell: &Cell) -> [f64; 2] {
 }
 
 /// Compute the parent cell for a specific resolution.
-pub(crate) fn cell_to_parent(cell: &Cell, parent_res: u8) -> Cell {
+fn cell_to_parent(cell: &Cell, parent_res: u8) -> Result<Cell, QuadbinError> {
     // Check resolution
     let resolution = cell.resolution();
-    assert!(
-        parent_res < resolution,
-        "parent resolution should be greater than current resolution"
-    );
+    if parent_res >= resolution {
+        return Err(QuadbinError::InvalidResolution(InvalidResolution::new(
+            parent_res,
+            "Parent resolution should be lower than the current resolution",
+        )));
+    }
 
     let result = (cell.get() & !(0x1F << 52))
         | ((parent_res as u64) << 52)
         | (FOOTER >> ((parent_res as u64) << 1));
 
-    Cell::new(result)
+    Cell::try_from(result)
 }

@@ -45,3 +45,26 @@ macro_rules! invalid_value_error {
 }
 
 invalid_value_error!("direction", InvalidDirection, u8);
+invalid_value_error!("cell index", InvalidCell, Option<u64>);
+invalid_value_error!("resolution", InvalidResolution, u8);
+invalid_value_error!("offset", InvalidOffset, f64);
+
+// One enum to rule them all
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum QuadbinError {
+    InvalidResolution(InvalidResolution),
+    InvalidOffset(InvalidOffset),
+    InvalidCell(InvalidCell),
+}
+
+impl std::fmt::Display for QuadbinError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            QuadbinError::InvalidResolution(e) => write!(f, "{}", e),
+            QuadbinError::InvalidOffset(e) => write!(f, "{}", e),
+            QuadbinError::InvalidCell(e) => write!(f, "{}", e),
+        }
+    }
+}
+
+impl std::error::Error for QuadbinError {}
