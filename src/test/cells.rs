@@ -99,8 +99,8 @@ fn test_cell_to_bbox() {
 
     for i in cases.iter() {
         let bbox = Cell::new(*i).to_bbox();
-        assert_eq!(bbox[0] < bbox[2], true);
-        assert_eq!(bbox[1] < bbox[3], true);
+        assert!(bbox[0] < bbox[2]);
+        assert!(bbox[1] < bbox[3]);
     }
 }
 
@@ -147,7 +147,7 @@ fn test_cell_to_parent_invalid_resolution() {
 #[test]
 fn test_cell_area() {
     let area = Cell::new(5209574053332910079_u64).area_m2();
-    assert_relative_eq!(area, 6023040823252.6641, epsilon = 1e-2);
+    assert_relative_eq!(area, 6023040823252.664, epsilon = 1e-2);
 }
 
 // Find cell's neighbors

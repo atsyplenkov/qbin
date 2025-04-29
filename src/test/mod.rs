@@ -1,4 +1,4 @@
 mod cells;
-mod direction;
+mod directions;
 mod hashing;
-mod utils;
+mod tiles;
