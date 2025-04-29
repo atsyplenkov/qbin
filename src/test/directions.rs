@@ -1,12 +1,12 @@
-use crate::direction::*;
-use crate::error::*;
+use crate::directions::*;
+use crate::errors::*;
 
 #[test]
 fn test_valid_direction() {
     let dirs = [0, 1, 2, 3];
 
     for val in dirs.iter() {
-        assert_eq!(u8::from(Direction::new_unchecked(*val)), *val as u8);
+        assert_eq!(u8::from(Direction::new_unchecked(*val)), { *val });
         assert_eq!(u64::from(Direction::new_unchecked(*val)), *val as u64);
         assert_eq!(usize::from(Direction::new_unchecked(*val)), *val as usize);
     }

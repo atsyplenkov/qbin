@@ -1,6 +1,6 @@
 [package]
 name = "qbin"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Anatoly Tsyplenkov <atsyplenkov@fastmail.com>"]
 edition = "2024"
 license = "MIT"
@@ -17,6 +17,7 @@ categories = ["data-structures", "science::geo"]
 [dev-dependencies]
 approx = "0.5.1"
 criterion = "0.5.1"
+geohash = "0.13.1"
 h3o = "0.8.0"
 
 [[bench]]

@@ -1,10 +1,25 @@
 # Quadbin
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/atsyplenkov/qbin/blob/main/LICENSE)
-[![crates.io](https://img.shields.io/crates/v/qbin.svg?logo=rust)](https://crates.io/crates/qbin)
-[![Docs.rs](https://img.shields.io/docsrs/qbin?label=docs.rs&logo=rust)](https://docs.rs/qbin)
-[![Build & Test](https://github.com/atsyplenkov/qbin/actions/workflows/rust.yml/badge.svg)](https://github.com/atsyplenkov/qbin/actions/workflows/rust.yml)
-[![codecov](https://codecov.io/gh/atsyplenkov/qbin/graph/badge.svg?token=4SZ4RI3ILS)](https://codecov.io/gh/atsyplenkov/qbin)
+<p align="center">
+    <a href="https://github.com/atsyplenkov/qbin/releases">
+        <img src="https://img.shields.io/github/v/release/atsyplenkov/qbin?style=flat&labelColor=1C2C2E&color=dea584&logo=GitHub&logoColor=white"></a>
+    <a href="https://crates.io/crates/qbin/">
+        <img src="https://img.shields.io/crates/v/qbin?style=flat&labelColor=1C2C2E&color=dea584&logo=Rust&logoColor=white"></a>
+    <a href="https://codecov.io/gh/atsyplenkov/qbin">
+        <img src="https://img.shields.io/codecov/c/gh/atsyplenkov/qbin?style=flat&labelColor=1C2C2E&color=dea584&logo=Codecov&logoColor=white"></a>
+    <br>
+    <a href="https://github.com/atsyplenkov/qbin/actions/workflows/rust.yml">
+        <img src="https://img.shields.io/github/actions/workflow/status/atsyplenkov/qbin/rust.yml?style=flat&labelColor=1C2C2E&color=dea584&logo=GitHub%20Actions&logoColor=white"></a>
+    <a href="https://docs.rs/qbin/">
+        <img src="https://img.shields.io/docsrs/qbin?style=flat&labelColor=1C2C2E&color=dea584&logo=Rust&logoColor=white"></a>
+    <br>
+</p>
+
+<h4 align="center">
+  <a href="https://docs.rs/qbin/">Documentation</a> |
+  <a href="https://crates.io/crates/qbin/">Website</a>
+</h4>
+
 
 A Rust implementation of Quadbin, a hierarchical geospatial index tiling approach developed by [CARTO](https://github.com/CartoDB). Like the [Microsoft's Bing Maps Tile System](https://docs.microsoft.com/en-us/bingmaps/articles/bing-maps-tile-system) (aka Quadkey), Quadbin uniformly subdivides a map in Mercator projection into four squares at different resolution levels, from 0 to 26 (less than 1 m² at the equator). However, unlike Quadkey, Quadbin stores the grid cell index in a 64-bit integer.
 

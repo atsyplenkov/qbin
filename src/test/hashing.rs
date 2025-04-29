@@ -1,4 +1,4 @@
-use crate::types::Tile;
+use crate::tiles::Tile;
 use crate::utils::point_cover;
 
 #[test]

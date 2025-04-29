@@ -1,4 +1,4 @@
-use crate::error;
+use crate::errors;
 use core::fmt;
 
 /// Maximum value for a direction.
@@ -62,7 +62,7 @@ impl Direction {
 }
 
 impl TryFrom<u8> for Direction {
-    type Error = error::InvalidDirection;
+    type Error = errors::InvalidDirection;
 
     fn try_from(value: u8) -> Result<Self, Self::Error> {
         match value {

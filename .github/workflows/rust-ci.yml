@@ -1,0 +1,67 @@
+name: Rust CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+env:
+  CARGO_TERM_COLOR: always
+  PKG_CONFIG_PATH: /usr/lib/pkgconfig
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        arch: [x64, arm64]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: cargo build --verbose
+      - name: Run tests
+        run: cargo test --verbose  -- --test-threads=2
+
+  clippy:
+    name: Lints
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - name: Check the lints
+        run: cargo clippy --tests --verbose -- -D warnings
+
+
+  rustfmt:
+    name: Formatting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Check the formatting
+        run: cargo fmt -- --check --verbose
+
+  lychee:
+    name: Links
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+      - name: Check the links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: -v *.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
