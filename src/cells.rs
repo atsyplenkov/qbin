@@ -209,12 +209,12 @@ impl Cell {
     pub fn to_bbox(&self) -> [f64; 4] {
         let tile = &self.to_tile();
 
-        let xmin = &tile.to_longitude(0.0);
-        let xmax = &tile.to_longitude(1.0);
-        let ymin = &tile.to_latitude(1.0);
-        let ymax = &tile.to_latitude(0.0);
+        let xmin = tile.to_longitude(0.0).expect("offset");
+        let xmax = tile.to_longitude(1.0).expect("offset");
+        let ymin = tile.to_latitude(1.0).expect("offset");
+        let ymax = tile.to_latitude(0.0).expect("offset");
 
-        [*xmin, *ymin, *xmax, *ymax]
+        [xmin, ymin, xmax, ymax]
     }
 
     /// Convert a geographic point into a Quadbin cell.
@@ -336,8 +336,8 @@ fn point_to_cell(lat: f64, lng: f64, res: u8) -> Result<Cell, InvalidCell> {
 /// Convert cell into point
 fn cell_to_point(cell: &Cell) -> [f64; 2] {
     let tile = cell.to_tile();
-    let lat = tile.to_latitude(0.5);
-    let lon = tile.to_longitude(0.5);
+    let lat = tile.to_latitude(0.5).expect("offset");
+    let lon = tile.to_longitude(0.5).expect("offset");
 
     // Return array, not tuple, as it more memory efficient
     // See https://doc.rust-lang.org/stable/book/ch03-02-data-types.html#the-array-type

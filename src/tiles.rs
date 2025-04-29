@@ -38,16 +38,16 @@ impl Tile {
     ///
     /// See also [Tile::to_longitude].
     ///
-    pub fn to_latitude(self, offset: f64) -> f64 {
-        tile_to_latitude(&self, offset)
+    pub fn to_latitude(self, offset: f64) -> Option<f64> {
+        tile_to_latitude(&self, offset).ok()
     }
 
     /// Return tile's longitude.
     ///
     /// See also [Tile::to_latitude].
     ///
-    pub fn to_longitude(self, offset: f64) -> f64 {
-        tile_to_longitude(&self, offset)
+    pub fn to_longitude(self, offset: f64) -> Option<f64> {
+        tile_to_longitude(&self, offset).ok()
     }
 
     /// Get tile's siblings.
