@@ -25,7 +25,7 @@ impl Tile {
     }
 
     /// Compute the tile for a longitude and latitude in a specific resolution.
-    pub fn from_point(lat: f64, lng: f64, res: u8) -> Self {
+    pub fn from_point(lat: f64, lng: f64, res: u8) -> Result<Self, QuadbinError> {
         point_to_tile(lat, lng, res)
     }
 
@@ -55,15 +55,15 @@ impl Tile {
         tile_neighbor(self, direction)
     }
 
-    /// Compute a hash from the tile.
-    #[allow(dead_code)]
-    pub fn to_hash(self) -> u64 {
-        to_tile_hash(&self)
-    }
+    // /// Compute a hash from the tile.
+    // #[allow(dead_code)]
+    // pub fn to_hash(self) -> u64 {
+    //     to_tile_hash(&self)
+    // }
 
-    /// Compute a tile from the hash.
-    #[allow(dead_code)]
-    pub fn from_hash(tile_hash: u64) -> Tile {
-        from_tile_hash(tile_hash)
-    }
+    // /// Compute a tile from the hash.
+    // #[allow(dead_code)]
+    // pub fn from_hash(tile_hash: u64) -> Tile {
+    //     from_tile_hash(tile_hash)
+    // }
 }

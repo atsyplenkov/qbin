@@ -49,11 +49,11 @@ pub(crate) fn point_to_tile_fraction(
 }
 
 /// Compute the tile for a longitude and latitude in a specific resolution.
-pub(crate) fn point_to_tile(lat: f64, lng: f64, res: u8) -> Tile {
-    let (x, y, z) = point_to_tile_fraction(lat, lng, res).expect("resolution");
+pub(crate) fn point_to_tile(lat: f64, lng: f64, res: u8) -> Result<Tile, QuadbinError> {
+    let (x, y, z) = point_to_tile_fraction(lat, lng, res)?;
     let x: u32 = x.floor() as u32;
     let y: u32 = y.floor() as u32;
-    Tile::new(x, y, z)
+    Ok(Tile::new(x, y, z))
 }
 
 /// Compute the latitude for a tile with an offset.
@@ -189,35 +189,35 @@ pub(crate) fn tile_neighbor(tile: &Tile, direction: Direction) -> Option<Tile> {
     Some(Tile::new(x, y, z))
 }
 
-/// Compute a hash from the tile.
-pub(crate) fn to_tile_hash(tile: &Tile) -> u64 {
-    let x = tile.x as u64;
-    let y = tile.y as u64;
-    let z = tile.z as u64;
+// /// Compute a hash from the tile.
+// pub(crate) fn to_tile_hash(tile: &Tile) -> u64 {
+//     let x = tile.x as u64;
+//     let y = tile.y as u64;
+//     let z = tile.z as u64;
 
-    let dim = 2 * (1 << z);
+//     let dim = 2 * (1 << z);
 
-    ((dim * y + x) * 32) + z
-}
+//     ((dim * y + x) * 32) + z
+// }
 
-/// Compute a tile from the hash.
-#[allow(dead_code)]
-pub(crate) fn from_tile_hash(tile_hash: u64) -> Tile {
-    // TODO:
-    // Return None if hash is invalid
-    // Understand why do we need tile hashing
-    let z = tile_hash % 32_u64;
-    let dim = 2_u64 * (1_u64 << z);
-    let xy = (tile_hash - z) / 32;
-    let x = xy % dim;
-    let y = ((xy - x) / dim) % dim;
+// /// Compute a tile from the hash.
+// #[allow(dead_code)]
+// pub(crate) fn from_tile_hash(tile_hash: u64) -> Tile {
+//     // TODO:
+//     // Return None if hash is invalid
+//     // Understand why do we need tile hashing
+//     let z = tile_hash % 32_u64;
+//     let dim = 2_u64 * (1_u64 << z);
+//     let xy = (tile_hash - z) / 32;
+//     let x = xy % dim;
+//     let y = ((xy - x) / dim) % dim;
 
-    Tile::new(x as u32, y as u32, z as u8)
-}
+//     Tile::new(x as u32, y as u32, z as u8)
+// }
 
-/// Return the tiles hashes that cover a point.
-#[allow(dead_code)]
-pub(crate) fn point_cover(lat: f64, lng: f64, res: u8) -> u64 {
-    let tile = Tile::from_point(lat, lng, res);
-    to_tile_hash(&tile)
-}
+// /// Return the tiles hashes that cover a point.
+// #[allow(dead_code)]
+// pub(crate) fn point_cover(lat: f64, lng: f64, res: u8) -> u64 {
+//     let tile = Tile::from_point(lat, lng, res);
+//     to_tile_hash(&tile)
+// }

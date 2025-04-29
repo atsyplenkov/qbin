@@ -20,15 +20,15 @@ fn test_point_to_tile_fraction() {
 #[test]
 fn test_point_to_tile() {
     // X axis
-    assert_eq!(Tile::from_point(0.0, -180.0, 0), Tile::new(0, 0, 0));
-    assert_eq!(Tile::from_point(85.0, -180.0, 2), Tile::new(0, 0, 2));
-    assert_eq!(Tile::from_point(85.0, 180.0, 2), Tile::new(0, 0, 2));
-    assert_eq!(Tile::from_point(85.0, -185.0, 2), Tile::new(3, 0, 2));
-    assert_eq!(Tile::from_point(85.0, 185.0, 2), Tile::new(0, 0, 2));
+    assert_eq!(Tile::from_point(0.0, -180.0, 0), Ok(Tile::new(0, 0, 0)));
+    assert_eq!(Tile::from_point(85.0, -180.0, 2), Ok(Tile::new(0, 0, 2)));
+    assert_eq!(Tile::from_point(85.0, 180.0, 2), Ok(Tile::new(0, 0, 2)));
+    assert_eq!(Tile::from_point(85.0, -185.0, 2), Ok(Tile::new(3, 0, 2)));
+    assert_eq!(Tile::from_point(85.0, 185.0, 2), Ok(Tile::new(0, 0, 2)));
 
     // Y-axis
-    assert_eq!(Tile::from_point(-95.0, -175.0, 2), Tile::new(0, 3, 2));
-    assert_eq!(Tile::from_point(95.0, -175.0, 2), Tile::new(0, 0, 2));
+    assert_eq!(Tile::from_point(-95.0, -175.0, 2), Ok(Tile::new(0, 3, 2)));
+    assert_eq!(Tile::from_point(95.0, -175.0, 2), Ok(Tile::new(0, 0, 2)));
 }
 
 // Estimate tile's area
@@ -62,7 +62,7 @@ fn test_tile_conversion() {
 
     let lon = -45.0_f64;
     let lat = 45.0_f64;
-    let tile = Tile::from_point(lat, lon, 10);
+    let tile = Tile::from_point(lat, lon, 10).unwrap();
 
     // Check Tile conversion
     assert_eq!(tile.x, 384_u32);

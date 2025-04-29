@@ -1,5 +1,6 @@
 mod cells;
+mod data;
 mod directions;
 mod errors;
-mod hashing;
+mod geo;
 mod tiles;
