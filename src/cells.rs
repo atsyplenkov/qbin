@@ -116,7 +116,7 @@ impl Cell {
     /// ```
     pub fn neighbor(&self, direction: Direction) -> Option<Self> {
         let tile = self.to_tile().neighbor(direction)?;
-        Some(tile.to_cell().expect("cell index"))
+        tile.to_cell().ok()
     }
 
     /// Find the Cell's sibling in a specific [Direction].
@@ -348,10 +348,12 @@ fn cell_to_point(cell: &Cell) -> [f64; 2] {
 fn cell_to_parent(cell: &Cell, parent_res: u8) -> Result<Cell, InvalidCell> {
     // Check resolution
     let resolution = cell.resolution();
-    assert!(
-        parent_res < resolution,
-        "parent resolution should be lower than current resolution"
-    );
+    if parent_res >= resolution {
+        return Err(InvalidCell::new(
+            Some(cell.get()),
+            "Parent resolution should be lower than the current resolution",
+        ));
+    }
 
     let result = (cell.get() & !(0x1F << 52))
         | ((parent_res as u64) << 52)

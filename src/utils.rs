@@ -22,6 +22,8 @@ pub(crate) fn clip_latitude(lat: f64) -> f64 {
 /// specific resolution.
 pub(crate) fn point_to_tile_fraction(lat: f64, lng: f64, res: u8) -> (f64, f64, u8) {
     // Check resolution to avoid overflow
+    // TODO:
+    // Replace with Error
     assert!(
         (res <= MAX_RESOLUTION),
         "Resolution should be between 0 and 26"
@@ -52,6 +54,8 @@ pub(crate) fn point_to_tile(lat: f64, lng: f64, res: u8) -> Tile {
 /// Compute the latitude for a tile with an offset.
 pub(crate) fn tile_to_latitude(tile: &Tile, offset: f64) -> f64 {
     // Check if offset is between 0 and 1
+    // TODO:
+    // Replace with Error
     assert!(
         (0.0..=1.0).contains(&offset),
         "Offset should be between 0 and 1"
@@ -69,6 +73,8 @@ pub(crate) fn tile_to_latitude(tile: &Tile, offset: f64) -> f64 {
 /// Compute the longitude for a tile with an offset.
 pub(crate) fn tile_to_longitude(tile: &Tile, offset: f64) -> f64 {
     // Check if offset is between 0 and 1
+    // TODO:
+    // Replace with Error
     assert!(
         (0.0..=1.0).contains(&offset),
         "Offset should be between 0 and 1"
