@@ -53,11 +53,11 @@ impl Cell {
     }
 
     /// Converts Quadbin cell into [geo::Polygon]
-    /// 
+    ///
     /// # Example
     /// ```
     /// use qbin::Cell;
-    /// 
+    ///
     /// // Create a Polygon out of the Cell's bounding box
     /// let polygon = Cell::new(5309133744805926483).to_polygon();
     /// // Check if the polygon is of type Polygon and with no interior rings
