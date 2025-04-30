@@ -2,7 +2,7 @@ use crate::Direction;
 use crate::constants::*;
 use crate::errors;
 use crate::errors::*;
-use crate::tiles::*;
+use crate::tiles::Tile;
 use crate::utils::*;
 use core::{fmt, num::NonZeroU64};
 
@@ -328,7 +328,7 @@ fn point_to_cell(lat: f64, lng: f64, res: u8) -> Result<Cell, QuadbinError> {
     let lng = clip_longitude(lng);
     let lat = clip_latitude(lat);
 
-    let tile = Tile::from_point(lat, lng, res);
+    let tile = Tile::from_point(lat, lng, res)?;
 
     tile.to_cell()
 }

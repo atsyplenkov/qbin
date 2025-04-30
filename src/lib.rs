@@ -2,6 +2,7 @@
 
 // Quadbin cell itself
 mod cells;
+mod geo;
 pub use crate::cells::Cell;
 
 // Direction struct

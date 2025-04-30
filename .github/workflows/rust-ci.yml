@@ -39,7 +39,6 @@ jobs:
       - name: Check the lints
         run: cargo clippy --tests --verbose -- -D warnings
 
-
   rustfmt:
     name: Formatting
     runs-on: ubuntu-latest
@@ -65,3 +64,26 @@ jobs:
           args: -v *.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  docs:
+    name: Docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Check documentation errors
+        env:
+          RUSTDOCFLAGS: -D warnings
+        run: cargo doc --no-deps --document-private-items --all-features --examples
+
+  publish-dry-run:
+    name: Publish dry run
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - run: cargo publish --dry-run
