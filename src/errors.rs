@@ -1,6 +1,6 @@
 use core::{error::Error, fmt};
 
-// Inherited from h3o
+// Adapted from h3o
 // https://github.com/HydroniumLabs/h3o/blob/ad2bebf52eab218d66b0bf213b14a2802bf616f7/src/error/invalid_value.rs
 
 // Macro to declare type-specific InvalidValue error type.

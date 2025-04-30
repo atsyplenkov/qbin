@@ -1,6 +1,7 @@
 use super::data::*;
 use crate::Cell;
 use crate::errors::*;
+use geo::{LineString, Polygon};
 
 #[test]
 fn test_quadbin_from_point() {
@@ -33,4 +34,24 @@ fn test_invalid_resolution() {
             "Resolution should be between 0 and 26"
         )))
     );
+}
+
+#[test]
+fn test_cell_to_polygon() {
+    let bbox = [22.5, -21.943045533438166, 45.0, 0.0];
+
+    let polygon = Polygon::new(
+        LineString::from(vec![
+            (bbox[0], bbox[1]), // bottom-left
+            (bbox[2], bbox[1]), // bottom-right
+            (bbox[2], bbox[3]), // top-right
+            (bbox[0], bbox[3]), // top-left
+            (bbox[0], bbox[1]), // back to bottom-left to close the loop
+        ]),
+        vec![],
+    );
+
+    let qb_cell = Cell::new(5209574053332910079);
+
+    assert_eq!(qb_cell.to_polygon(), polygon)
 }
