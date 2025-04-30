@@ -93,8 +93,33 @@ impl Cell {
         cell_to_parent(self, parent_res)
     }
 
-    // TODO:
-    // Add child and/or children
+    /// Return Cell's children.
+    pub fn children(
+        &self,
+        children_res: u8,
+    ) -> Result<impl Iterator<Item = Result<Self, QuadbinError>>, QuadbinError> {
+        let resolution = self.resolution();
+        if children_res <= resolution || children_res > 26 {
+            return Err(QuadbinError::InvalidResolution(InvalidResolution::new(
+                children_res,
+                "Children resolution should be greater than the current resolution",
+            )));
+        }
+
+        let resolution_diff = children_res - resolution;
+        let block_range = (1 << (resolution_diff << 1)) as u64;
+        let block_shift = (52 - (children_res << 1)) as u64;
+
+        let cell = self.get();
+
+        let child_base = (cell & !(0x1F << 52)) | ((children_res as u64) << 52);
+        let child_base = child_base & !((block_range - 1) << block_shift);
+
+        Ok((0..block_range).map(move |x| {
+            let child = child_base | (x << block_shift);
+            Cell::try_from(child)
+        }))
+    }
 
     /// Find the Cell's neighbor in a specific [Direction].
     ///
