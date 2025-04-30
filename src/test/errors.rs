@@ -56,3 +56,19 @@ fn test_invalid_cell_index() {
         );
     }
 }
+
+#[test]
+fn test_invalid_child_res() {
+    let cell = Cell::try_from(5209574053332910079).expect("cell index");
+    let kids = cell.children(3);
+
+    assert!(kids.is_err());
+
+    assert_eq!(
+        kids.err(),
+        Some(QuadbinError::InvalidResolution(InvalidResolution::new(
+            3,
+            "Children resolution should be greater than the current resolution"
+        )))
+    );
+}

@@ -37,6 +37,20 @@ fn test_invalid_resolution() {
 }
 
 #[test]
+fn test_invalid_multipoint_resolution() {
+    let orig = multi_point_2d();
+    let res = 27;
+    let cell = Cell::from_multipoint(orig, res);
+    assert_eq!(
+        cell.filter_map(|i| i.err()).next(),
+        Some(QuadbinError::InvalidResolution(InvalidResolution::new(
+            res,
+            "Resolution should be between 0 and 26"
+        )))
+    );
+}
+
+#[test]
 fn test_cell_to_polygon() {
     let bbox = [22.5, -21.943045533438166, 45.0, 0.0];
 

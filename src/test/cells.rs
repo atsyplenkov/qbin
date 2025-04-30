@@ -241,3 +241,69 @@ fn test_cell_neighbors() {
         .neighbors();
     assert_eq!(nn[1], None)
 }
+
+#[test]
+fn test_cell_children_one() {
+    let parent = Cell::new(5192650370358181887);
+    let kids = parent.children(1).unwrap();
+
+    let truth: [u64; 4] = [
+        5193776270265024511,
+        5194902170171867135,
+        5196028070078709759,
+        5197153969985552383,
+    ];
+
+    for (i, cell_result) in kids.enumerate() {
+        let cell = cell_result.expect("cell index");
+        assert_eq!(cell.get(), truth[i]);
+    }
+}
+
+#[test]
+fn test_cell_children_five() {
+    let parent = Cell::new(5209574053332910079);
+    let kids = parent.children(5).unwrap();
+
+    let truth: [u64; 4] = [
+        5214064458820747263,
+        5214068856867258367,
+        5214073254913769471,
+        5214077652960280575,
+    ];
+
+    for (i, cell_result) in kids.enumerate() {
+        let cell = cell_result.expect("cell index");
+        assert_eq!(cell.get(), truth[i]);
+    }
+}
+
+#[test]
+fn test_cell_children_six() {
+    let parent = Cell::new(5209574053332910079);
+    let kids = parent.children(6).unwrap();
+
+    let truth: [u64; 16] = [
+        5218564759913234431,
+        5218565859424862207,
+        5218566958936489983,
+        5218568058448117759,
+        5218569157959745535,
+        5218570257471373311,
+        5218571356983001087,
+        5218572456494628863,
+        5218573556006256639,
+        5218574655517884415,
+        5218575755029512191,
+        5218576854541139967,
+        5218577954052767743,
+        5218579053564395519,
+        5218580153076023295,
+        5218581252587651071,
+    ];
+
+    for (i, cell_result) in kids.enumerate() {
+        let cell = cell_result.expect("cell index");
+        assert_eq!(cell.get(), truth[i]);
+    }
+}
