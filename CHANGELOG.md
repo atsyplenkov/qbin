@@ -13,6 +13,11 @@ Possible sections are:
 
 <!-- next-header -->
 
+## [0.2.0] - 2025-04-30
+
+- Added basic support for geo-primitive types (#1), including encoding Points and MultiPoints into Quadbin Cells and decoding Quadbin Cells into Polygons.
+- Significantly rewrote the codebase to make it more idiomatic. Most functions now return either `Result<>` or `Option<>`.
+- Added benchmarks to evaluate performance and compare with `geohash` and `h3o`.
 
 ## [0.1.0] - 2025-04-26
 
