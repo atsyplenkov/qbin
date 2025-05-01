@@ -1,4 +1,4 @@
-use crate::errors;
+use crate::errors::QuadbinError;
 use core::fmt;
 
 /// Maximum value for a direction.
@@ -62,7 +62,7 @@ impl Direction {
 }
 
 impl TryFrom<u8> for Direction {
-    type Error = errors::InvalidDirection;
+    type Error = QuadbinError;
 
     fn try_from(value: u8) -> Result<Self, Self::Error> {
         match value {
@@ -70,7 +70,7 @@ impl TryFrom<u8> for Direction {
             1 => Ok(Self::Right),
             2 => Ok(Self::Left),
             3 => Ok(Self::Down),
-            _ => Err(Self::Error::new(value, "out of range")),
+            _ => Err(Self::Error::InvalidDirection(value)),
         }
     }
 }

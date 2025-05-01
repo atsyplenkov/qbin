@@ -1,7 +1,6 @@
 use crate::Direction;
 use crate::constants::*;
-use crate::errors;
-use crate::errors::*;
+use crate::errors::QuadbinError;
 use crate::tiles::Tile;
 use crate::utils::*;
 use core::{fmt, num::NonZeroU64};
@@ -29,14 +28,11 @@ use core::{fmt, num::NonZeroU64};
 pub struct Cell(NonZeroU64);
 
 impl TryFrom<u64> for Cell {
-    type Error = errors::QuadbinError;
+    type Error = QuadbinError;
 
     fn try_from(value: u64) -> Result<Self, QuadbinError> {
         if !is_valid_cell(value) {
-            return Err(QuadbinError::InvalidCell(InvalidCell::new(
-                Some(value),
-                "Provided Quadbin Cell index is invalid",
-            )));
+            return Err(QuadbinError::InvalidCell(Some(value)));
         }
 
         Ok(Self(NonZeroU64::new(value).expect("non-zero cell index")))
@@ -94,29 +90,50 @@ impl Cell {
     }
 
     /// Return Cell's children.
+    ///
+    /// # Errors
+    /// Children resolution must be greater than Cell's resolution, otherwise
+    /// [QuadbinError] is returned
+    ///
+    /// # Example
+    /// ```
+    /// use qbin::Cell;
+    /// let parent = Cell::new(5209574053332910079);
+    /// let kids = parent
+    ///     .children(5)
+    ///     .expect("valid children")
+    ///     .collect::<Vec<_>>();
+    ///
+    /// let t: [u64; 4] = [
+    ///     5214064458820747263,
+    ///     5214068856867258367,
+    ///     5214073254913769471,
+    ///     5214077652960280575,
+    /// ];
+    ///
+    /// assert_eq!(
+    ///     kids,
+    ///     vec![
+    ///         Cell::try_from(t[0]),
+    ///         Cell::try_from(t[1]),
+    ///         Cell::try_from(t[2]),
+    ///         Cell::try_from(t[3])
+    ///     ]
+    /// );
+    /// ```
+    ///
     pub fn children(
         &self,
         children_res: u8,
-    ) -> Result<impl Iterator<Item = Result<Self, QuadbinError>>, QuadbinError> {
+    ) -> Result<impl Iterator<Item = Result<Cell, QuadbinError>>, QuadbinError> {
         let resolution = self.resolution();
-        if children_res <= resolution {
-            return Err(QuadbinError::InvalidResolution(InvalidResolution::new(
-                children_res,
-                "Children resolution should be greater than the current resolution",
-            )));
-        }
-
-        if !(0..=26).contains(&children_res) {
-            return Err(QuadbinError::InvalidResolution(InvalidResolution::new(
-                children_res,
-                "Children resolution should be between 0 and 26",
-            )));
+        if children_res <= resolution || children_res > 26 {
+            return Err(QuadbinError::InvalidResolution(children_res));
         }
 
         let resolution_diff = children_res - resolution;
         let block_range = (1 << (resolution_diff << 1)) as u64;
         let block_shift = (52 - (children_res << 1)) as u64;
-
         let cell = self.get();
 
         let child_base = (cell & !(0x1F << 52)) | ((children_res as u64) << 52);
@@ -381,10 +398,7 @@ fn cell_to_parent(cell: &Cell, parent_res: u8) -> Result<Cell, QuadbinError> {
     // Check resolution
     let resolution = cell.resolution();
     if parent_res >= resolution {
-        return Err(QuadbinError::InvalidResolution(InvalidResolution::new(
-            parent_res,
-            "Parent resolution should be lower than the current resolution",
-        )));
+        return Err(QuadbinError::InvalidResolution(parent_res));
     }
 
     let result = (cell.get() & !(0x1F << 52))
