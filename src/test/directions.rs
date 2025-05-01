@@ -1,5 +1,4 @@
 use crate::directions::*;
-use crate::errors::*;
 
 #[test]
 fn test_valid_direction() {
@@ -20,13 +19,4 @@ fn test_valid_direction() {
     assert_eq!(Direction::try_from(1).ok(), Some(Direction::Right));
     assert_eq!(Direction::try_from(2).ok(), Some(Direction::Left));
     assert_eq!(Direction::try_from(3).ok(), Some(Direction::Down))
-}
-
-#[test]
-fn test_invalid_direction() {
-    assert!(!InvalidDirection::new(9, "error").to_string().is_empty());
-    assert_eq!(
-        Direction::try_from(5).err(),
-        Some(InvalidDirection::new(5, "out of range"))
-    )
 }

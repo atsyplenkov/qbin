@@ -1,70 +1,27 @@
-use core::{error::Error, fmt};
+use std::error::Error;
+use std::fmt;
 
-// Adapted from h3o
-// https://github.com/HydroniumLabs/h3o/blob/ad2bebf52eab218d66b0bf213b14a2802bf616f7/src/error/invalid_value.rs
-
-// Macro to declare type-specific InvalidValue error type.
-macro_rules! invalid_value_error {
-    ($name:literal, $error:ident, $value_type:ty) => {
-        #[doc = concat!("Invalid ", $name, ".")]
-        #[derive(Clone, Copy, Debug, PartialEq)]
-        #[allow(
-            clippy::allow_attributes,
-            clippy::derive_partial_eq_without_eq,
-            reason = "value type may not be `Eq` (e.g. f64)"
-        )]
-        pub struct $error {
-            /// The invalid value.
-            pub value: $value_type,
-            /// The reason why it's invalid.
-            pub reason: &'static str,
-        }
-
-        impl $error {
-            pub(crate) const fn new(value: $value_type, reason: &'static str) -> Self {
-                Self { value, reason }
-            }
-        }
-
-        impl fmt::Display for $error {
-            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                write!(
-                    f,
-                    "invalid {} (got {:?}): {}",
-                    $name, self.value, self.reason
-                )
-            }
-        }
-
-        impl Error for $error {
-            fn source(&self) -> Option<&(dyn Error + 'static)> {
-                None
-            }
-        }
-    };
-}
-
-invalid_value_error!("direction", InvalidDirection, u8);
-invalid_value_error!("cell index", InvalidCell, Option<u64>);
-invalid_value_error!("resolution", InvalidResolution, u8);
-invalid_value_error!("offset", InvalidOffset, f64);
-
-// One enum to rule them all
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum QuadbinError {
-    InvalidResolution(InvalidResolution),
-    InvalidOffset(InvalidOffset),
-    InvalidCell(InvalidCell),
+    InvalidDirection(u8),
+    InvalidCell(Option<u64>),
+    InvalidResolution(u8),
+    InvalidOffset(f64),
 }
 
-impl std::fmt::Display for QuadbinError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl fmt::Display for QuadbinError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            QuadbinError::InvalidResolution(e) => write!(f, "{}", e),
-            QuadbinError::InvalidOffset(e) => write!(f, "{}", e),
-            QuadbinError::InvalidCell(e) => write!(f, "{}", e),
+            QuadbinError::InvalidDirection(e) => write!(f, "invalid direction: {}", e),
+            QuadbinError::InvalidCell(e) => write!(f, "invalid cell index: {:?}", e),
+            QuadbinError::InvalidResolution(e) => write!(
+                f,
+                "Invalid resolution specified: {}. Accepted values are between 0 and 26, inclusive",
+                e
+            ),
+            QuadbinError::InvalidOffset(msg) => write!(f, "invalid offset: {}", msg),
         }
     }
 }
 
-impl std::error::Error for QuadbinError {}
+impl Error for QuadbinError {}
