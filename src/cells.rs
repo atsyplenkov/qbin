@@ -99,10 +99,17 @@ impl Cell {
         children_res: u8,
     ) -> Result<impl Iterator<Item = Result<Self, QuadbinError>>, QuadbinError> {
         let resolution = self.resolution();
-        if children_res <= resolution || children_res > 26 {
+        if children_res <= resolution {
             return Err(QuadbinError::InvalidResolution(InvalidResolution::new(
                 children_res,
                 "Children resolution should be greater than the current resolution",
+            )));
+        }
+
+        if !(0..=26).contains(&children_res) {
+            return Err(QuadbinError::InvalidResolution(InvalidResolution::new(
+                children_res,
+                "Children resolution should be between 0 and 26",
             )));
         }
 
