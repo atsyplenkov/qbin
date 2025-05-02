@@ -11,4 +11,4 @@ name = 'qbin'
 
 [dependencies]
 extendr-api = '*'
-qbin = { git = "https://github.com/atsyplenkov/qbin" }
+qbin = "0.2.0"

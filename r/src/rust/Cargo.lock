@@ -295,7 +295,8 @@ dependencies = [
 [[package]]
 name = "qbin"
 version = "0.2.0"
-source = "git+https://github.com/atsyplenkov/qbin#b7383d7b0772d4e7166cb25d5ed7d6034a4cf748"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "af66196ef798e5a4e53dd543a8722149e348c9f138d4e76eebbb609cbcabb974"
 dependencies = [
  "geo",
 ]

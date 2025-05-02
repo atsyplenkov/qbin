@@ -10,9 +10,9 @@
 #' @useDynLib qbin, .registration = TRUE
 NULL
 
-#' Return string `"Hello world!"` to R.
-#' @export
-hello_world <- function() .Call(wrap__hello_world)
+quadbin_to_ints <- function(x) .Call(wrap__quadbin_to_ints, x)
+
+vctrs_class <- function() .Call(wrap__vctrs_class)
 
 
 # nolint end
