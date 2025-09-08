@@ -19,7 +19,7 @@ geo = "0.30.0"
 approx = "0.5.1"
 criterion = "0.7.0"
 geohash = "0.13.1"
-h3o = "0.9.0"
+h3o = "0.9.1"
 
 [[bench]]
 name = "main"
