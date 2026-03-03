@@ -24,10 +24,13 @@ fn test_valid_direction() {
 #[test]
 fn test_direction_iter() {
     let directions = Direction::iter().collect::<Vec<_>>();
-    assert_eq!(directions, vec![
-        Direction::Up,
-        Direction::Right,
-        Direction::Left,
-        Direction::Down,
-    ]);
+    assert_eq!(
+        directions,
+        vec![
+            Direction::Up,
+            Direction::Right,
+            Direction::Left,
+            Direction::Down,
+        ]
+    );
 }
