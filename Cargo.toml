@@ -1,6 +1,6 @@
 [package]
 name = "qbin"
-version = "0.2.0"
+version = "0.2.0-dev"
 authors = ["Anatoly Tsyplenkov <atsyplenkov@fastmail.com>"]
 edition = "2024"
 license = "MIT"
