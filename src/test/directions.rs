@@ -20,3 +20,17 @@ fn test_valid_direction() {
     assert_eq!(Direction::try_from(2).ok(), Some(Direction::Left));
     assert_eq!(Direction::try_from(3).ok(), Some(Direction::Down))
 }
+
+#[test]
+fn test_direction_iter() {
+    let directions = Direction::iter().collect::<Vec<_>>();
+    assert_eq!(
+        directions,
+        vec![
+            Direction::Up,
+            Direction::Right,
+            Direction::Left,
+            Direction::Down,
+        ]
+    );
+}

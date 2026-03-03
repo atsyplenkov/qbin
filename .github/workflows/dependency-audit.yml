@@ -1,0 +1,27 @@
+name: Dependency Audit
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-audit:
+    name: RustSec Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Install Rust stable toolchain
+        run: |
+          rustup toolchain install stable --profile minimal --no-self-update
+          rustup default stable
+      - name: Install cargo-audit
+        run: cargo install cargo-audit --locked --version 0.22.1
+      - name: Audit Cargo.lock
+        run: cargo audit

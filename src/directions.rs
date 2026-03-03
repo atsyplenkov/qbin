@@ -2,7 +2,7 @@ use crate::errors::QuadbinError;
 use core::fmt;
 
 /// Maximum value for a direction.
-const MAX: u8 = 4;
+const MAX: u8 = 3;
 
 /// A direction within an rectangular grid.
 ///
