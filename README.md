@@ -1,4 +1,4 @@
-# Qbin
+<h1 align=center><code>qbin</code></h1>
 
 <p align="center">
     <a href="https://github.com/atsyplenkov/qbin/releases">
